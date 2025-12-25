@@ -8,7 +8,17 @@ const CreatePost = () => {
     const [loading, setLoading] = useState(false);
 
     const handlePost = async () => {
-        if (!text.trim() || !currentUser) return;
+        console.log("Attempting to post. User:", currentUser, "Text:", text);
+
+        if (!text.trim()) {
+            alert("Please write something!");
+            return;
+        }
+        if (!currentUser) {
+            alert("Waiting for user session... try again in 2 seconds.");
+            return;
+        }
+
         setLoading(true);
 
         try {
