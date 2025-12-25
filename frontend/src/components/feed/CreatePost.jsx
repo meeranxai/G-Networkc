@@ -46,8 +46,9 @@ const CreatePost = () => {
                 // Ideally refresh feed here (Needs context or reload)
                 window.location.reload();
             } else {
-                console.error('Post failed');
-                alert('Failed to create post');
+                const errorData = await response.json().catch(() => ({}));
+                console.error('Post failed', errorData);
+                alert(`Failed: ${errorData.message || response.statusText || 'Unknown Error'}`);
             }
         } catch (error) {
             console.error('Error posting:', error);
