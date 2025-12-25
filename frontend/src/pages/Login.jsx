@@ -52,7 +52,7 @@ const Login = () => {
     return (
         <main className="login-container">
             <section className="login-brand-side" style={{
-                background: `url('/images/illust.jpg') center/cover no-repeat`
+                background: `url('https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=2070&auto=format&fit=crop') center/cover no-repeat`
             }}>
                 <div className="brand-overlay"></div>
                 <div className="brand-content">
