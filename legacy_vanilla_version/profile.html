@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile | G-Network</title>
+    <link rel="stylesheet" href="./css/style.css">
+    <link rel="stylesheet" href="./css/social.css"> <!-- App Shell -->
+    <link rel="stylesheet" href="./css/components.css">
+    <link rel="stylesheet" href="./css/profile.css"> <!-- Specific Profile Styles -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Scripts (Head) -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+
+    <!-- PWA Manifest & Meta -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4a90e2">
+    <link rel="apple-touch-icon" href="/images/G.png">
+</head>
+
+<body class="social-app">
+    <script src="./js/firebase-compat.js"></script>
+    <script src="./js/auth-guard.js"></script>
+
+    <!-- APP SHELL -->
+    <div class="app-layout">
+
+        <!-- LEFT SIDEBAR -->
+        <aside class="sidebar-left">
+            <div class="social-brand">
+                <h1>G-Network<span style="color:var(--primary)">.</span></h1>
+            </div>
+
+            <nav class="nav-links">
+                <a href="./index.html" class="nav-item">
+                    <i class="fas fa-home"></i> <span>Home</span>
+                </a>
+                <a href="./chat.html" class="nav-item">
+                    <i class="fas fa-comment-dots"></i> <span>G-Chat</span>
+                </a>
+                <a href="#" class="nav-item">
+                    <i class="fas fa-compass"></i> <span>Explore</span>
+                </a>
+                <a href="#" class="nav-item" id="notif-link">
+                    <i class="fas fa-bell"></i> <span>Notifications</span>
+                    <span class="unread-badge" id="notif-badge" style="display: none;">0</span>
+                </a>
+                <a href="./profile.html" class="nav-item active">
+                    <i class="fas fa-user"></i> <span>Profile</span>
+                </a>
+            </nav>
+
+            <button class="btn-post-main">
+                <i class="fas fa-pen-nib"></i> Post
+            </button>
+            <!-- PWA Install Button (Hidden by default) -->
+            <button id="btn-install-pwa" class="btn-install-pwa"
+                style="display: none; margin-top: 10px; width: 100%; padding: 12px; border: 1px dashed var(--primary); background: rgba(37, 99, 235, 0.1); color: var(--primary); border-radius: 12px; cursor: pointer; font-weight: 600; align-items: center; justify-content: center; gap: 8px;">
+                <i class="fas fa-download"></i> Install App
+            </button>
+        </aside>
+
+        <!-- CENTER CONTENT (Profile View) -->
+        <main class="feed-container" style="width: 100%; max-width: 935px;">
+
+            <div class="profile-container">
+                <!-- Header -->
+                <header class="profile-header">
+                    <div class="header-avatar-col">
+                        <img src="./images/default-avatar.png" alt="Profile" class="profile-avatar-lg">
+                    </div>
+
+                    <div class="header-info-col">
+                        <div class="profile-title-row">
+                            <div class="profile-names">
+                                <h2 class="profile-username">@username</h2>
+                                <span class="profile-displayname">Display Name</span>
+                            </div>
+                            <div class="profile-actions">
+                                <!-- JS will populate this -->
+                                <button class="btn-profile-edit">Edit Profile</button>
+                            </div>
+                        </div>
+
+                        <div class="profile-stats-row">
+                            <div class="stat-item">
+                                <b id="profile-posts-count">0</b>
+                                <span>posts</span>
+                            </div>
+                            <div class="stat-item">
+                                <b id="profile-followers-count">0</b>
+                                <span>followers</span>
+                            </div>
+                            <div class="stat-item">
+                                <b id="profile-following-count">0</b>
+                                <span>following</span>
+                            </div>
+                        </div>
+
+                        <div class="profile-bio">
+                            <h3 id="profile-bio-name">G-Network User</h3>
+                            <p id="profile-bio-text">No bio yet.</p>
+                            <div id="profile-tech-stack"></div>
+                            <p class="member-since" id="profile-member-since">
+                                <i class="far fa-calendar-alt"></i> Joined Recently
+                            </p>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Tabs -->
+                <div class="profile-tabs">
+                    <a href="#" class="tab-item active">
+                        <i class="fas fa-th"></i> POSTS
+                    </a>
+                    <a href="#" class="tab-item">
+                        <i class="fas fa-bookmark"></i> SAVED
+                    </a>
+                    <a href="#" class="tab-item">
+                        <i class="fas fa-user-tag"></i> TAGGED
+                    </a>
+                </div>
+
+                <!-- Grid -->
+                <div class="posts-grid" id="user-posts-grid">
+                    <!-- Javascript will populate this -->
+                    <div class="grid-post">
+                        <div class="post-overlay">
+                            <div class="overlay-stat"><i class="fas fa-heart"></i> 45</div>
+                            <div class="overlay-stat"><i class="fas fa-comment"></i> 12</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </main>
+
+    </div>
+
+    <!-- BOTTOM NAV (Mobile) -->
+    <nav class="bottom-nav">
+        <a href="./index.html" class="bottom-nav-item"><i class="fas fa-home"></i></a>
+        <a href="#" class="bottom-nav-item"><i class="fas fa-search"></i></a>
+        <a href="#" class="bottom-nav-item highlight"><i class="fas fa-plus"></i></a>
+        <a href="#" class="bottom-nav-item"><i class="fas fa-bell"></i></a>
+        <a href="./profile.html" class="bottom-nav-item active"><i class="fas fa-user"></i></a>
+    </nav>
+
+    <!-- EDIT PROFILE MODAL -->
+    <div class="modal-overlay" id="edit-profile-modal">
+        <div class="edit-profile-modal">
+            <div class="modal-header">
+                <h3>Edit Profile</h3>
+                <button class="btn-close-drawer" onclick="toggleEditModal(false)"><i class="fas fa-times"></i></button>
+            </div>
+
+            <div class="edit-form">
+                <div class="avatar-edit-section">
+                    <img src="" alt="Preview" class="avatar-preview-sm" id="edit-avatar-preview">
+                    <div class="avatar-controls">
+                        <label for="avatar-upload" class="btn-change-avatar">Change Profile Photo</label>
+                        <input type="file" id="avatar-upload" hidden accept="image/*">
+                    </div>
+                </div>
+
+                <div class="group-row">
+                    <label>Display Name</label>
+                    <input type="text" id="edit-display-name" placeholder="Your Name (can be anything)">
+                    <small class="input-hint">This is your public name - use emojis, special characters,
+                        anything!</small>
+                </div>
+
+                <div class="group-row">
+                    <label>Username</label>
+                    <div class="username-input-wrapper">
+                        <span class="username-prefix">@</span>
+                        <input type="text" id="edit-username" placeholder="unique_username" maxlength="30">
+                        <span class="username-status" id="edit-username-status"></span>
+                    </div>
+                    <small class="input-hint">Your unique handle - 3-30 characters, lowercase only</small>
+                    <small class="input-error" id="edit-username-error"></small>
+                </div>
+
+                <div class="group-row">
+                    <label>Bio</label>
+                    <textarea id="edit-bio" rows="4" placeholder="Tell us about yourself..."></textarea>
+                    <small class="input-hint">Press Enter for new line, arrow keys to navigate</small>
+                </div>
+
+                <div class="group-row">
+                    <label>Tech Stack / Skills (comma separated)</label>
+                    <input type="text" id="edit-tech-stack" placeholder="e.g. React, Node.js, Python">
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button class="btn-cancel" onclick="toggleEditModal(false)">Cancel</button>
+                <button class="btn-save-profile" id="btn-save-profile">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SETTINGS MODAL (Glassmorphic) -->
+    <div class="modal-overlay" id="settings-modal">
+        <div class="edit-profile-modal settings-modal-content">
+            <div class="modal-header">
+                <h3>Settings & Privacy</h3>
+                <button class="btn-close-drawer" onclick="toggleSettingsModal(false)"><i
+                        class="fas fa-times"></i></button>
+            </div>
+
+            <div class="settings-tabs">
+                <button class="settings-tab active" data-tab="privacy">Privacy</button>
+                <button class="settings-tab" data-tab="appearance">Appearance</button>
+                <button class="settings-tab" data-tab="account">Account</button>
+            </div>
+
+            <div class="settings-body">
+                <!-- PRIVACY TAB -->
+                <div class="settings-section active" id="sec-privacy">
+                    <p class="section-desc">Control who can see your personal info</p>
+
+                    <div class="setting-item-toggle">
+                        <div class="toggle-text">
+                            <strong>Private Account</strong>
+                            <span>Only followers can see your posts</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="privacy-is-private">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+
+                    <div class="setting-item">
+                        <label>Last Seen</label>
+                        <select id="privacy-lastseen">
+                            <option value="everyone">Everyone</option>
+                            <option value="contacts">My Contacts</option>
+                            <option value="nobody">Nobody</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-item">
+                        <label>Profile Photo</label>
+                        <select id="privacy-photo">
+                            <option value="everyone">Everyone</option>
+                            <option value="contacts">My Contacts</option>
+                            <option value="nobody">Nobody</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-item">
+                        <label>About</label>
+                        <select id="privacy-about">
+                            <option value="everyone">Everyone</option>
+                            <option value="contacts">My Contacts</option>
+                            <option value="nobody">Nobody</option>
+                        </select>
+                    </div>
+
+                    <div class="setting-actions">
+                        <button class="btn-save-profile" id="btn-save-privacy">Save Privacy</button>
+                    </div>
+                </div>
+
+                <!-- APPEARANCE TAB -->
+                <div class="settings-section" id="sec-appearance">
+                    <div class="setting-item-toggle">
+                        <div class="toggle-text">
+                            <strong>Dark Mode</strong>
+                            <span>Adjust the appearance of G-Network</span>
+                        </div>
+                        <label class="switch">
+                            <input type="checkbox" id="theme-toggle">
+                            <span class="slider round"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- ACCOUNT TAB -->
+                <div class="settings-section" id="sec-account">
+                    <div class="setting-danger-zone">
+                        <button class="btn-logout" id="btn-logout">
+                            <i class="fas fa-sign-out-alt"></i> Log Out
+                        </button>
+                        <p>Securely sign out of your account on this device.</p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Real-time Notifications Toast Container -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Notification Drawer (Sleek Glassmorphism) -->
+    <div id="notif-drawer" class="notif-drawer glass-blur">
+        <div class="drawer-header">
+            <h3>Notifications</h3>
+            <button class="btn-close-drawer" id="close-notif-btn"><i class="fas fa-times"></i></button>
+        </div>
+        <div class="notif-list" id="notif-list-container">
+            <div class="empty-notif" style="padding:40px; text-align:center; color: #94a3b8;">
+                <i class="fas fa-bell-slash" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.5;"></i>
+                <p>No notifications yet</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Socket.io -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script type="module" src="./js/notifications.js"></script>
+    <script src="./js/toast.js"></script> <!-- Toast Logic -->
+    <script type="module" src="./js/profile-social.js"></script>
+    <script type="module" src="./js/profile-init.js"></script>
+    <script type="module" src="./js/pwa-install.js"></script>
+</body>
+
+</html>

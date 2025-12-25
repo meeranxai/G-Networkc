@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>G-Network | Feed</title>
+  <!-- Core & Social CSS -->
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/social.css">
+  <link rel="stylesheet" href="/css/components.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+  <!-- PWA Manifest & Meta -->
+  <link rel="manifest" href="/manifest.json">
+  <meta name="theme-color" content="#4a90e2">
+  <link rel="apple-touch-icon" href="/images/G.png">
+</head>
+
+<body class="social-app">
+  <!-- Firebase CDN Libraries (Required) -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  <!-- Firebase Config & Initialization -->
+  <script src="./js/firebase-compat.js"></script>
+  <script src="./js/auth-guard.js"></script>
+
+  <!-- APP SHELL -->
+  <div class="app-layout">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="sidebar-left">
+      <div class="social-brand">
+        <h1>G-Network<span style="color:var(--primary)">.</span></h1>
+      </div>
+
+      <nav class="nav-links">
+        <a href="./index.html" class="nav-item active">
+          <i class="fas fa-home"></i> <span>Home</span>
+        </a>
+        <a href="./chat.html" class="nav-item">
+          <i class="fas fa-comment-dots"></i> <span>G-Chat</span>
+        </a>
+        <a href="./explore.html" class="nav-item">
+          <i class="fas fa-compass"></i> <span>Explore</span>
+        </a>
+        <a href="#" class="nav-item" id="notif-link">
+          <i class="fas fa-bell"></i> <span>Notifications</span>
+          <span class="unread-badge" id="notif-badge" style="display: none;">0</span>
+        </a>
+        <a href="#" class="nav-item">
+          <i class="fas fa-envelope"></i> <span>Messages</span>
+        </a>
+        <a href="./profile.html" class="nav-item">
+          <i class="fas fa-user"></i> <span>Profile</span>
+        </a>
+      </nav>
+
+      <button class="btn-post-main">
+        <i class="fas fa-pen-nib"></i> Post
+      </button>
+
+      <!-- PWA Install Button (Hidden by default) -->
+      <button id="btn-install-pwa" class="btn-install-pwa"
+        style="display: none; margin-top: 10px; width: 100%; padding: 12px; border: 1px dashed var(--primary); background: rgba(37, 99, 235, 0.1); color: var(--primary); border-radius: 12px; cursor: pointer; font-weight: 600; align-items: center; justify-content: center; gap: 8px;">
+        <i class="fas fa-download"></i> Install App
+      </button>
+    </aside>
+
+    <!-- CENTER FEED -->
+    <main class="feed-container">
+      <!-- Mobile Header -->
+      <header class="feed-header">
+        G-Network
+      </header>
+
+      <!-- Create Post Composer (Phase 13 Redesign) -->
+      <section class="create-composer glass-blur" id="inline-composer">
+        <div class="composer-top">
+          <img src="./images/default-avatar.png" alt="User" class="user-avatar-sm" id="composer-avatar">
+          <div class="input-wrapper">
+            <textarea id="composer-text" placeholder="What's happening in tech?" rows="1"></textarea>
+            <!-- Inline Image Preview -->
+            <div id="inline-preview" class="inline-preview">
+              <img src="" id="inline-img">
+              <button id="remove-inline-img"><i class="fas fa-times"></i></button>
+            </div>
+          </div>
+        </div>
+
+        <div class="composer-actions" id="composer-actions">
+          <div class="media-trigger">
+            <button class="action-btn-text icon-photo" id="inline-upload-btn">
+              <i class="fas fa-image"></i> <span>Photo</span>
+            </button>
+            <button class="action-btn-text icon-video">
+              <i class="fas fa-video"></i> <span>Video</span>
+            </button>
+          </div>
+          <button class="btn-post-minimal" id="inline-post-btn" style="display: none;">Post</button>
+        </div>
+        <input type="file" id="inline-file-input" hidden accept="image/*">
+      </section>
+
+      <!-- POSTS STREAM -->
+      <div id="social-feed-stream">
+        <!-- Loading Skeleton / Initial State -->
+        <div class="social-card" style="padding: 40px; text-align: center;">
+          <i class="fas fa-circle-notch fa-spin" style="font-size: 2rem; color: var(--primary);"></i>
+          <p style="margin-top: 15px; color: #64748b;">Loading community posts...</p>
+        </div>
+      </div>
+
+    </main>
+
+    <!-- RIGHT SIDEBAR (Trending) -->
+    <aside class="sidebar-right">
+      <div class="trending-box glass-blur">
+        <h3>Discovery Trends</h3>
+        <div id="trending-list">
+          <div class="empty-notif" style="padding:20px; text-align:center; color: #94a3b8;">
+            <p>Loading trends...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Suggested Users -->
+      <div class="trending-box glass-blur" style="margin-top: 20px;">
+        <h3>Suggested For You</h3>
+        <div id="suggested-users-list">
+          <div class="empty-notif" style="padding:20px; text-align:center; color: #94a3b8;">
+            <p>Loading suggestions...</p>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <!-- Real-time Notifications Toast Container -->
+  <div id="toast-container" class="toast-container"></div>
+
+  <!-- Notification Drawer (Sleek Glassmorphism) -->
+  <div id="notif-drawer" class="notif-drawer glass-blur">
+    <div class="drawer-header">
+      <h3>Notifications</h3>
+      <button class="btn-close-drawer" id="close-notif-btn"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="notif-list" id="notif-list-container">
+      <div class="empty-notif" style="padding:40px; text-align:center; color: #94a3b8;">
+        <i class="fas fa-bell-slash" style="font-size: 2rem; margin-bottom: 10px; opacity: 0.5;"></i>
+        <p>No notifications yet</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Lightbox Modal -->
+  <div id="lightbox-modal" class="lightbox-modal">
+    <span class="close-lightbox">&times;</span>
+    <img class="lightbox-content" id="lightbox-img">
+    <div class="lightbox-caption"></div>
+  </div>
+
+  <!-- BOTTOM NAV (Mobile) -->
+  <nav class="bottom-nav">
+    <a href="./index.html" class="bottom-nav-item active"><i class="fas fa-home"></i></a>
+    <a href="#" class="bottom-nav-item"><i class="fas fa-search"></i></a>
+    <a href="#" class="bottom-nav-item" id="notif-mobile-btn">
+      <i class="fas fa-bell"></i>
+      <span class="unread-badge-sm" id="notif-badge-mobile" style="display: none;"></span>
+    </a>
+    <a href="./profile.html" class="bottom-nav-item"><i class="fas fa-user"></i></a>
+  </nav>
+
+  <!-- Scripts -->
+  <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+
+  <!-- Social Logic -->
+  <script type="module" src="./js/notifications.js"></script>
+  <script src="./js/toast.js"></script> <!-- Toast Logic -->
+  <script type="module" src="./js/social.js"></script>
+  <script type="module" src="./js/create-post.js"></script>
+  <script type="module" src="./js/feed-init.js"></script>
+  <script src="./js/mobile-fab.js"></script>
+  <script type="module" src="./js/pwa-install.js"></script>
+</body>
+
+</html>

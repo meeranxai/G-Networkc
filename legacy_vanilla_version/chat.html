@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>G-Network - Premium Social</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="./css/whatsapp.css">
+    <link rel="stylesheet" href="./css/call.css">
+    <!-- Scripts (Head) -->
+    <!-- PWA Manifest & Meta -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#4a90e2">
+    <link rel="apple-touch-icon" href="/images/G.png">
+
+    <link rel="stylesheet" href="./css/call.css">
+</head>
+
+<body>
+    <!-- Core Scripts (Must load first) -->
+    <script src="https://cdn.socket.io/4.5.4/socket.io.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+    <script src="./js/firebase-compat.js"></script>
+    <script src="./js/auth-guard.js"></script>
+    <!-- Loading Screen -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loader"></div>
+        <p>Loading G-Chat...</p>
+    </div>
+
+    <!-- Main Container -->
+    <div id="app-container" class="app-container" style="display: none;">
+        <!-- Sidebar -->
+        <aside class="sidebar" style="position: relative; overflow: hidden;">
+            <!-- Profile Drawer (Left) -->
+            <div id="self-profile-drawer" class="profile-drawer">
+                <header class="drawer-header">
+                    <button id="close-profile-drawer" class="icon-btn"><i class="fas fa-arrow-left"></i></button>
+                    <h2>Profile</h2>
+                </header>
+                <div class="drawer-content">
+                    <div class="profile-avatar-container">
+                        <img id="drawer-user-avatar" src="" alt="Avatar">
+                    </div>
+                    <div class="profile-section">
+                        <label>Your name</label>
+                        <div class="profile-input-container">
+                            <input type="text" id="profile-name-input" placeholder="Your name" maxlength="25">
+                            <span class="char-counter" id="name-counter">25</span>
+                            <i class="fas fa-pen" onclick="document.getElementById('profile-name-input').focus()"></i>
+                        </div>
+                    </div>
+                    <p class="section-hint">This is not your username or pin. This name will be visible to your
+                        contacts.</p>
+                    <div class="profile-section">
+                        <label>About</label>
+                        <div class="profile-input-container">
+                            <input type="text" id="profile-bio-input" placeholder="About" maxlength="139">
+                            <span class="char-counter" id="bio-counter">139</span>
+                            <i class="fas fa-pen" onclick="document.getElementById('profile-bio-input').focus()"></i>
+                        </div>
+                    </div>
+
+                    <div class="bio-presets">
+                        <div class="preset-header">Select About</div>
+                        <div class="preset-item">Available</div>
+                        <div class="preset-item">Busy</div>
+                        <div class="preset-item">At school</div>
+                        <div class="preset-item">At the movies</div>
+                        <div class="preset-item">At work</div>
+                        <div class="preset-item">Battery about to die</div>
+                        <div class="preset-item">Can't talk, WhatsApp only</div>
+                        <div class="preset-item">In a meeting</div>
+                        <div class="preset-item">At the gym</div>
+                        <div class="preset-item">Sleeping</div>
+                        <div class="preset-item">Urgent calls only</div>
+                    </div>
+
+                    <div style="padding: 20px; text-align: center;">
+                        <button class="send-btn" id="save-profile-btn" style="width: 100%; border-radius: 8px;">Save
+                            Profile</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Drawer -->
+            <div id="settings-drawer" class="profile-drawer">
+                <header class="drawer-header">
+                    <button id="close-settings-drawer" class="icon-btn"><i class="fas fa-arrow-left"></i></button>
+                    <h2>Settings</h2>
+                </header>
+                <div class="drawer-content">
+                    <div class="chat-item" id="open-profile-from-settings"
+                        style="background: white; margin-bottom: 10px; border-bottom: none;">
+                        <img id="settings-user-avatar" src="" alt="Avatar">
+                        <div class="chat-item-info">
+                            <div class="chat-item-name" id="settings-user-name">Your Name</div>
+                            <div class="chat-item-message" id="settings-user-bio">Bio status</div>
+                        </div>
+                    </div>
+                    <div class="preset-item" id="open-privacy-drawer"><i class="fas fa-lock" style="width: 30px;"></i>
+                        Privacy</div>
+                    <div class="preset-item" id="open-chats-settings"><i class="fas fa-message"
+                            style="width: 30px;"></i> Chats</div>
+                    <div class="preset-item" id="open-notif-settings"><i class="fas fa-bell" style="width: 30px;"></i>
+                        Notifications</div>
+                    <div class="preset-item" id="open-help-settings"><i class="fas fa-circle-question"
+                            style="width: 30px;"></i> Help</div>
+                </div>
+            </div>
+
+            <!-- Chats Settings Drawer -->
+            <div id="chats-drawer" class="profile-drawer">
+                <header class="drawer-header">
+                    <button id="close-chats-drawer" class="icon-btn"><i class="fas fa-arrow-left"></i></button>
+                    <h2>Chats</h2>
+                </header>
+                <div class="drawer-content">
+                    <div class="preset-header">Display</div>
+                    <div class="preset-item" id="theme-toggle-btn">
+                        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                            <span><i class="fas fa-circle-half-stroke" style="width: 30px;"></i> Theme</span>
+                            <span style="color: #667781; font-size: 14px;" id="current-theme-label">Light</span>
+                        </div>
+                    </div>
+                    <div class="preset-item" id="wallpaper-btn">
+                        <i class="fas fa-image" style="width: 30px;"></i> Chat Wallpaper
+                    </div>
+                    <div class="preset-header">Chat settings</div>
+                    <div class="preset-item">
+                        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                            <span>Enter is send</span>
+                            <input type="checkbox" id="enter-is-send" checked>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Notifications Drawer -->
+            <div id="notifications-drawer" class="profile-drawer">
+                <header class="drawer-header">
+                    <button id="close-notifications-drawer" class="icon-btn"><i class="fas fa-arrow-left"></i></button>
+                    <h2>Notifications</h2>
+                </header>
+                <div class="drawer-content">
+                    <div class="preset-header">Message notifications</div>
+                    <div class="preset-item">
+                        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                            <span>Notification Tones</span>
+                            <input type="checkbox" id="notif-sound" checked>
+                        </div>
+                    </div>
+                    <div class="preset-item">
+                        <div style="display: flex; align-items: center; justify-content: space-between; width: 100%;">
+                            <span>Desktop Alerts</span>
+                            <input type="checkbox" id="desktop-alerts">
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Help Drawer -->
+            <div id="help-drawer" class="profile-drawer">
+                <header class="drawer-header">
+                    <button id="close-help-drawer" class="icon-btn"><i class="fas fa-arrow-left"></i></button>
+                    <h2>Help</h2>
+                </header>
+                <div class="drawer-content">
+                    <div class="preset-item">Help Center</div>
+                    <div class="preset-item">Contact us</div>
+                    <div class="preset-item">Terms and Privacy Policy</div>
+                    <div style="padding: 40px; text-align: center; color: #8696a0;">
+                        <img src="https://static.whatsapp.net/rsrc.php/v3/y6/r/wa669aeJeom.png"
+                            style="width: 60px; filter: grayscale(1); opacity: 0.3; margin-bottom: 20px;">
+                        <p style="font-size: 14px;">G-Chat Desktop</p>
+                        <p style="font-size: 12px; margin-top: 5px;">Version 1.0.0 (Beta)</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Privacy Drawer -->
+            <div id="privacy-drawer" class="profile-drawer">
+                <header class="drawer-header">
+                    <button id="close-privacy-drawer" class="icon-btn"><i class="fas fa-arrow-left"></i></button>
+                    <h2>Privacy</h2>
+                </header>
+                <div class="drawer-content">
+                    <div class="preset-header">Who can see my personal info</div>
+                    <div class="profile-section" style="margin-bottom: 0;">
+                        <label>Last seen</label>
+                        <select id="privacy-lastseen" class="profile-item-select"
+                            style="width: 100%; border: none; padding: 10px 0; font-size: 16px; outline: none;">
+                            <option value="everyone">Everyone</option>
+                            <option value="contacts">My contacts</option>
+                            <option value="nobody">Nobody</option>
+                        </select>
+                    </div>
+                    <div class="profile-section" style="margin-bottom: 0;">
+                        <label>Profile photo</label>
+                        <select id="privacy-photo" class="profile-item-select"
+                            style="width: 100%; border: none; padding: 10px 0; font-size: 16px; outline: none;">
+                            <option value="everyone">Everyone</option>
+                            <option value="contacts">My contacts</option>
+                            <option value="nobody">Nobody</option>
+                        </select>
+                    </div>
+                    <div class="profile-section">
+                        <label>About</label>
+                        <select id="privacy-about" class="profile-item-select"
+                            style="width: 100%; border: none; padding: 10px 0; font-size: 16px; outline: none;">
+                            <option value="everyone">Everyone</option>
+                            <option value="contacts">My contacts</option>
+                            <option value="nobody">Nobody</option>
+                        </select>
+                    </div>
+                    <p class="section-hint">If you don't share your Last Seen, you won't be able to see other
+                        people's
+                        Last Seen.</p>
+                </div>
+            </div>
+
+            <!-- Header -->
+            <header class="sidebar-header">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <a href="./index.html" class="icon-btn" title="Back to Feed"
+                        style="text-decoration: none; color: inherit;">
+                        <i class="fas fa-arrow-left"></i>
+                    </a>
+                    <div class="user-profile">
+                        <img id="user-avatar" src="https://ui-avatars.com/api/?name=User&background=128C7E&color=fff"
+                            alt="User">
+                    </div>
+                </div>
+                <div class="header-actions">
+                    <button class="icon-btn" title="New Chat"><i class="fas fa-comment-alt"></i></button>
+                    <div class="dropdown-container" style="position: relative; display: inline-block;">
+                        <button class="icon-btn" id="menu-btn" title="Menu"><i class="fas fa-ellipsis-v"></i></button>
+                        <div id="main-menu" class="dropdown-content"
+                            style="display: none; position: absolute; right: 0; top: 100%; background-color: white; border-radius: 3px; box-shadow: 0 2px 5px rgba(0,0,0,0.2); z-index: 2000; min-width: 150px; padding: 10px 0;">
+                            <div class="preset-item" id="menu-new-group" style="padding: 10px 20px;">New Group</div>
+                            <div class="preset-item" id="menu-settings" style="padding: 10px 20px;">Settings</div>
+                            <div class="preset-item" id="menu-profile" style="padding: 10px 20px;">Profile</div>
+                            <div class="preset-item" style="padding: 10px 20px;">Starred messages</div>
+                            <div class="preset-item" style="padding: 10px 20px;" onclick="firebase.auth().signOut()">Log
+                                out</div>
+                        </div>
+                    </div>
+            </header>
+
+            <!-- Search -->
+            <a href="./explore.html" class="nav-item">
+                <i class="fas fa-compass"></i>
+            </a>
+            <div class="search-container">
+                <div class="search-box">
+                    <i class="fas fa-search" id="search-icon"></i>
+                    <input type="text" placeholder="Search or start new chat" id="search-input">
+                </div>
+            </div>
+
+            <!-- Tabs -->
+            <div class="tabs-container">
+                <div class="tab active" data-tab="chats">
+                    <i class="fas fa-comment"></i> Chats
+                </div>
+                <div class="tab" data-tab="online">
+                    <i class="fas fa-user-friends"></i> Online (<span id="online-count">0</span>)
+                </div>
+            </div>
+
+            <!-- Chats List -->
+            <div class="chats-list" id="chats-list">
+                <!-- Chats will be loaded here -->
+            </div>
+
+            <!-- Online Users List -->
+            <div class="online-users-list" id="online-users-list" style="display: none;">
+                <!-- Online users will be loaded here -->
+            </div>
+        </aside>
+
+        <!-- Chat Window -->
+        <main class="chat-window" style="position: relative; overflow: hidden;">
+            <!-- Contact Info Drawer (Right) -->
+            <div id="contact-info-drawer" class="contact-drawer">
+                <header class="drawer-header" style="height: 60px; align-items: center; padding: 0 20px;">
+                    <button id="close-contact-drawer" class="icon-btn"><i class="fas fa-times"></i></button>
+                    <h2 style="font-size: 16px;">Contact info</h2>
+                </header>
+                <div class="drawer-content">
+                    <div class="profile-avatar-container" style="flex-direction: column; align-items: center;">
+                        <img id="contact-drawer-avatar" src="" alt="Contact Avatar">
+                        <h2 id="contact-drawer-name" style="margin-top: 15px; color: #111b21;">Name</h2>
+                        <p id="contact-drawer-email" style="color: #667781; font-size: 14px;">email@example.com</p>
+                    </div>
+                    <div class="profile-section">
+                        <label>About</label>
+                        <p id="contact-drawer-bio" style="font-size: 17px; color: #3b4a54;">Hey there! I am using
+                            G-Network.</p>
+                    </div>
+                </div>
+            </div>
+            <div id="welcome-screen" class="welcome-screen">
+                <div class="welcome-content">
+                    <img src="./images/logo.png" alt="G-Network" class="welcome-img">
+                    <h1>G-Network</h1>
+                    <p>Experience the next generation of social connectivity.</p>
+                    <p class="welcome-note"><i class="fas fa-shield-halved"></i> Privacy-First Messaging</p>
+                </div>
+            </div>
+
+            <!-- Active Chat -->
+            <div id="active-chat" class="active-chat" style="display: none;">
+                <!-- Chat Header -->
+                <header class="chat-header">
+                    <div class="chat-header-left">
+                        <a href="./index.html" class="icon-btn mobile-back-btn"
+                            style="display: none; margin-right: 10px; color: inherit; text-decoration: none;">
+                            <i class="fas fa-arrow-left"></i>
+                        </a>
+                        <img id="chat-avatar" src="" alt="User">
+                        <div class="chat-info">
+                            <h3 id="chat-name">User Name</h3>
+                            <span id="chat-status" class="chat-status">online</span>
+                        </div>
+                    </div>
+                    <div class="chat-header-right">
+                        <button class="icon-btn" id="btn-call-voice" title="Voice Call"><i
+                                class="fas fa-phone"></i></button>
+                        <button class="icon-btn" id="btn-call-video" title="Video Call"><i
+                                class="fas fa-video"></i></button>
+                        <button class="icon-btn" title="Search"><i class="fas fa-search"></i></button>
+                        <div class="dropdown-container" style="position: relative; display: inline-block;">
+                            <button class="icon-btn" id="chat-menu-btn" title="Menu"><i
+                                    class="fas fa-ellipsis-v"></i></button>
+                            <div id="chat-context-menu" class="dropdown-content"
+                                style="display: none; position: absolute; right: 0; top: 100%; background-color: var(--glass); backdrop-filter: blur(20px); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); z-index: 2000; min-width: 200px; padding: 10px 0; border: 1px solid var(--glass-border);">
+                                <div class="preset-item" id="menu-view-contact" style="padding: 10px 20px;">Contact info
+                                </div>
+                                <div class="preset-item" id="menu-select-messages" style="padding: 10px 20px;">Select
+                                    messages</div>
+                                <div class="preset-item" id="menu-mute" style="padding: 10px 20px;">Mute notifications
+                                </div>
+                                <div class="preset-item" id="menu-disappearing" style="padding: 10px 20px;">Disappearing
+                                    messages</div>
+                                <div class="preset-item" id="menu-clear-chat" style="padding: 10px 20px;">Clear messages
+                                </div>
+                                <div class="preset-item" id="menu-delete-chat" style="padding: 10px 20px;">Delete chat
+                                </div>
+                                <div class="preset-item submenu-trigger"
+                                    style="padding: 10px 20px; display: flex; justify-content: space-between; align-items: center;">
+                                    More <i class="fas fa-chevron-right" style="font-size: 10px;"></i>
+                                    <div class="submenu"
+                                        style="display: none; position: absolute; right: 100%; top: 0; background-color: var(--glass); backdrop-filter: blur(20px); border-radius: 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); min-width: 180px; padding: 10px 0; border: 1px solid var(--glass-border); margin-right: 5px;">
+                                        <div class="preset-item" id="menu-report" style="padding: 10px 20px;">Report
+                                        </div>
+                                        <div class="preset-item" id="menu-block" style="padding: 10px 20px;">Block</div>
+                                        <div class="preset-item" id="menu-export" style="padding: 10px 20px;">Export
+                                            chat</div>
+                                        <div class="preset-item" id="menu-shortcut" style="padding: 10px 20px;">Add
+                                            shortcut</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </header>
+
+                <!-- Messages Container -->
+                <div class="messages-container" id="messages-container">
+                    <!-- Messages will appear here -->
+                </div>
+
+                <!-- Chat Footer -->
+                <footer class="chat-footer">
+                    <!-- Reply Preview Bar (Absolute or Relative) -->
+                    <div id="reply-preview-bar" class="reply-preview-bar" style="display: none;">
+                        <div class="reply-wrapper">
+                            <div class="reply-line"></div>
+                            <div class="reply-info">
+                                <span id="reply-preview-name" class="reply-name">Sender</span>
+                                <span id="reply-preview-text" class="reply-text">Message preview...</span>
+                            </div>
+                        </div>
+                        <button class="btn-close-reply" onclick="window.chatManager.cancelReply()">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+
+                    <div id="emoji-picker-container" class="emoji-picker-container" style="display: none;">
+                        <!-- Emoji picker will be loaded here -->
+                    </div>
+                    <button class="icon-btn" id="emoji-btn"><i class="far fa-smile"></i></button>
+                    <button class="icon-btn" id="attach-btn" title="Attach file"><i
+                            class="fas fa-paperclip"></i></button>
+                    <input type="file" id="file-input" style="display: none;" accept="image/*,application/pdf">
+                    <div class="message-input-container">
+                        <input type="text" id="message-input" placeholder="Type a message" autocomplete="off">
+                        <div id="recording-ui" class="recording-ui" style="display: none;">
+                            <i class="fas fa-microphone" style="color: #ff3b30; animation: blink 1s infinite;"></i>
+                            <span id="recording-timer">0:00</span>
+                            <span
+                                style="flex: 1; text-align: center; color: var(--text-muted); font-size: 13px;">Recording...
+                                Click to Send / Stop</span>
+                        </div>
+                    </div>
+                    <button class="icon-btn" id="mic-btn" title="Voice Message"><i
+                            class="fas fa-microphone"></i></button>
+                    <button class="send-btn" id="send-btn">
+                        <i class="fas fa-paper-plane"></i>
+                    </button>
+                </footer>
+            </div>
+        </main>
+    </div>
+
+    <!-- Media Preview Modal -->
+    <div id="media-modal" class="media-modal">
+        <span class="close-modal" id="close-media">&times;</span>
+        <img id="modal-img" src="" alt="Full size">
+        <a id="download-btn" href="#" class="download-link" download>
+            <i class="fas fa-download"></i> Download
+        </a>
+    </div>
+
+    <!-- Group Creation Modal -->
+    <div id="group-modal" class="modal" style="display: none;">
+        <div class="modal-content glass" style="max-width: 400px; padding: 0; overflow: hidden; border-radius: 20px;">
+            <header class="drawer-header" style="height: 60px; padding: 0 20px;">
+                <button id="close-group-modal" class="icon-btn"><i class="fas fa-times"></i></button>
+                <h2>New Group</h2>
+            </header>
+            <div style="padding: 20px;">
+                <div class="profile-section">
+                    <label>Group Name</label>
+                    <input type="text" id="group-name-input" placeholder="Enter group name" class="profile-item-select"
+                        style="width: 100%; border: 1px solid var(--glass-border); background: rgba(255,255,255,0.05); padding: 12px; border-radius: 10px; color: var(--text-primary);">
+                </div>
+                <div class="profile-section">
+                    <label>Select Participants</label>
+                    <div id="group-participants-list"
+                        style="max-height: 200px; overflow-y: auto; margin-top: 10px; border: 1px solid var(--glass-border); border-radius: 10px; padding: 10px;">
+                        <!-- Online users will be listed here with checkboxes -->
+                    </div>
+                </div>
+                <div style="margin-top: 20px; text-align: center;">
+                    <button id="create-group-btn" class="send-btn"
+                        style="width: 100%; border-radius: 10px; padding: 12px; font-weight: 600;">Create Group</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================
+         INCOMING CALL MODAL (Glassmorphic)
+         ========================================= -->
+    <div id="incoming-call-overlay" class="incoming-call-overlay">
+        <div class="incoming-call-card">
+            <div class="caller-avatar-container">
+                <div class="caller-pulse"></div>
+                <img id="incoming-caller-avatar" src="./images/default-avatar.png" class="caller-avatar" alt="Caller">
+            </div>
+            <h3 id="incoming-caller-name" class="caller-name">User Name</h3>
+            <p class="call-status">Incoming Video Call...</p>
+
+            <div class="incoming-actions">
+                <button id="btn-reject-call" class="btn-call-action btn-reject"><i
+                        class="fas fa-phone-slash"></i></button>
+                <button id="btn-accept-call" class="btn-call-action btn-accept"><i class="fas fa-phone"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- =========================================
+         ACTIVE VIDEO CALL OVERLAY
+         ========================================= -->
+    <div id="video-call-overlay" class="video-call-overlay">
+        <div class="video-grid">
+            <video id="remoteVideo" autoplay playsinline></video>
+            <video id="localVideo" autoplay playsinline muted></video>
+            <!-- Local is always muted to prevent feedback -->
+
+            <div class="call-header-info">
+                <h3 id="active-call-name" style="color: white; font-weight: 600;">User Name</h3>
+                <span id="call-timer" class="call-timer">00:00</span>
+            </div>
+
+            <div class="call-controls">
+                <button id="btn-toggle-mic" class="btn-control active"><i class="fas fa-microphone"></i></button>
+                <button id="btn-toggle-camera" class="btn-control active"><i class="fas fa-video"></i></button>
+                <button id="btn-end-call" class="btn-end-call btn-control"><i class="fas fa-phone-slash"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Audio Elements -->
+    <audio id="audio-ringtone" loop preload="auto">
+        <source src="./assets/ringtone.mp3" type="audio/mpeg">
+        <source src="https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.m4a" type="audio/mp4">
+    </audio>
+    <audio id="audio-call-end" preload="auto">
+        <source src="./assets/call_end.mp3" type="audio/mpeg">
+    </audio>
+
+    <!-- Modules -->
+    <script src="./js/toast.js"></script> <!-- Toast Logic -->
+    <script type="module" src="./js/chat-init.js"></script>
+    <script type="module" src="./js/whatsapp-chat.js"></script>
+    <script type="module" src="./js/pwa-install.js"></script>
+</body>
+
+</html>

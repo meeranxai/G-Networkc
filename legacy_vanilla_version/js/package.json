@@ -1,0 +1,15 @@
+{
+  "name": "g-network-profile",
+  "version": "1.0.0",
+  "description": "G-Network Profile Dashboard",
+  "main": "js/profile.js",
+  "scripts": {
+    "dev": "live-server .",
+    "build": "echo 'Build step not configured'",
+    "test": "echo 'No tests configured'"
+  },
+  "dependencies": {
+    "firebase": "^10.12.2"
+  },
+  "type": "module"
+}

@@ -1,0 +1,49 @@
+{
+    "name": "G-Network",
+    "short_name": "G-Net",
+    "description": "The social network for developers to connect, share, and grow.",
+    "start_url": "/index.html",
+    "scope": "/",
+    "display": "standalone",
+    "background_color": "#0f172a",
+    "theme_color": "#2563eb",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/images/G.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/images/G.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "G-Chat",
+            "short_name": "Chat",
+            "description": "Open your messages",
+            "url": "/chat.html",
+            "icons": [
+                {
+                    "src": "/images/G.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Profile",
+            "short_name": "Profile",
+            "description": "View your profile",
+            "url": "/profile.html",
+            "icons": [
+                {
+                    "src": "/images/G.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ]
+}
