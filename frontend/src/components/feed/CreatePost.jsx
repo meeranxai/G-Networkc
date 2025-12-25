@@ -6,16 +6,18 @@ const CreatePost = () => {
     const { currentUser } = useAuth();
     const [text, setText] = useState('');
     const [loading, setLoading] = useState(false);
+    const [statusMsg, setStatusMsg] = useState('');
 
     const handlePost = async () => {
+        setStatusMsg("Processing...");
         console.log("Attempting to post. User:", currentUser, "Text:", text);
 
         if (!text.trim()) {
-            alert("Please write something!");
+            setStatusMsg("Please write something!");
             return;
         }
         if (!currentUser) {
-            alert("Waiting for user session... try again in 2 seconds.");
+            setStatusMsg("Not logged in. Please wait...");
             return;
         }
 
@@ -43,17 +45,17 @@ const CreatePost = () => {
 
             if (response.ok) {
                 setText('');
-                // Ideally refresh feed here (Needs context or reload)
-                window.location.reload();
+                setStatusMsg("Success! Reloading...");
+                setTimeout(() => window.location.reload(), 1000);
             } else {
                 const errorData = await response.json().catch(() => ({}));
                 console.error('Post failed', errorData);
                 const msg = errorData.message || (await response.text()).substring(0, 100) || response.statusText;
-                alert(`Error ${response.status}: ${msg}`);
+                setStatusMsg(`Error ${response.status}: ${msg}`);
             }
         } catch (error) {
             console.error('Error posting:', error);
-            alert('Error creating post');
+            setStatusMsg(`Network Error: ${error.message}`);
         } finally {
             setLoading(false);
         }
@@ -99,6 +101,7 @@ const CreatePost = () => {
                     {loading ? 'Posting...' : 'Post'}
                 </button>
             </div>
+            {statusMsg && <div style={{ color: statusMsg.includes('Success') ? 'green' : 'red', padding: '10px', textAlign: 'center', background: 'rgba(0,0,0,0.8)' }}>{statusMsg}</div>}
             <input type="file" id="inline-file-input" hidden accept="image/*" />
         </section>
     );
