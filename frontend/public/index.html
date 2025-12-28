@@ -1,491 +1,102 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>G-Network - Social Platform</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #333;
-            min-height: 100vh;
-        }
-
-        .navbar {
-            background: rgba(255, 255, 255, 0.95);
-            padding: 15px 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        .navbar-content {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logo {
-            font-size: 24px;
-            font-weight: bold;
-            color: #667eea;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 20px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: #333;
-            font-weight: 500;
-            transition: color 0.3s;
-        }
-
-        .nav-links a:hover {
-            color: #667eea;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        .hero {
-            text-align: center;
-            color: white;
-            padding: 60px 20px;
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 15px;
-            margin: 20px 0;
-        }
-
-        .hero h1 {
-            font-size: 3em;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .hero p {
-            font-size: 1.2em;
-            margin-bottom: 30px;
-            opacity: 0.9;
-        }
-
-        .btn {
-            background: #4CAF50;
-            color: white;
-            border: none;
-            padding: 12px 30px;
-            border-radius: 25px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin: 10px;
-            text-decoration: none;
-            display: inline-block;
-        }
-
-        .btn:hover {
-            background: #45a049;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .btn-secondary {
-            background: rgba(255, 255, 255, 0.2);
-            border: 2px solid white;
-        }
-
-        .btn-secondary:hover {
-            background: rgba(255, 255, 255, 0.3);
-        }
-
-        .feed {
-            display: grid;
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .post {
-            background: white;
-            border-radius: 12px;
-            padding: 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .post:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
-        }
-
-        .post-header {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-            gap: 12px;
-        }
-
-        .avatar {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: white;
-            font-weight: bold;
-            font-size: 18px;
-        }
-
-        .post-meta {
-            flex: 1;
-        }
-
-        .post-meta strong {
-            display: block;
-            color: #333;
-        }
-
-        .post-meta small {
-            color: #999;
-        }
-
-        .post-content {
-            margin: 15px 0;
-            line-height: 1.6;
-            color: #555;
-        }
-
-        .post-actions {
-            display: flex;
-            gap: 15px;
-            margin-top: 15px;
-            padding-top: 15px;
-            border-top: 1px solid #eee;
-        }
-
-        .action-btn {
-            background: none;
-            border: none;
-            color: #667eea;
-            cursor: pointer;
-            font-weight: 600;
-            transition: all 0.3s;
-            padding: 8px 12px;
-            border-radius: 6px;
-        }
-
-        .action-btn:hover {
-            background: #f0f0f0;
-            color: #764ba2;
-        }
-
-        .stats {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
-            margin: 30px 0;
-        }
-
-        .stat-card {
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            text-align: center;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .stat-number {
-            font-size: 2.5em;
-            font-weight: bold;
-            color: #667eea;
-            margin: 10px 0;
-        }
-
-        .stat-label {
-            color: #999;
-            font-size: 0.9em;
-        }
-
-        .features {
-            background: white;
-            border-radius: 12px;
-            padding: 30px;
-            margin: 30px 0;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .features h2 {
-            color: #667eea;
-            margin-bottom: 20px;
-        }
-
-        .features-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 20px;
-        }
-
-        .feature-item {
-            padding: 15px;
-            border-left: 4px solid #667eea;
-            background: #f9f9f9;
-            border-radius: 6px;
-        }
-
-        .feature-item h3 {
-            color: #667eea;
-            margin-bottom: 8px;
-        }
-
-        .feature-item p {
-            color: #666;
-            font-size: 0.9em;
-        }
-
-        footer {
-            background: rgba(0, 0, 0, 0.1);
-            color: white;
-            text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-        }
-
-        @media (max-width: 768px) {
-            .hero h1 {
-                font-size: 2em;
-            }
-
-            .nav-links {
-                gap: 10px;
-            }
-
-            .post-actions {
-                flex-wrap: wrap;
-            }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skynaire</title>
+<style>
+body{margin:0;padding:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;min-height:100vh}
+.navbar{background:rgba(255,255,255,.95);padding:15px 20px;box-shadow:0 2px 10px rgba(0,0,0,.1);position:sticky;top:0;z-index:100}
+.navbar-content{max-width:1200px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.logo{font-size:24px;font-weight:bold;color:#667eea}
+.nav-links{display:flex;gap:20px;list-style:none}
+.nav-links a{text-decoration:none;color:#333;font-weight:500}
+.container{max-width:1200px;margin:0 auto;padding:20px}
+.hero{text-align:center;color:#fff;padding:60px 20px;background:rgba(0,0,0,.1);border-radius:15px;margin:20px 0}
+.hero h1{font-size:3em;margin-bottom:10px}
+.hero p{font-size:1.2em;margin-bottom:30px}
+.btn{background:#4CAF50;color:#fff;border:none;padding:12px 30px;border-radius:25px;cursor:pointer;font-size:16px;font-weight:600;margin:10px;transition:all .3s}
+.btn:hover{background:#45a049;transform:translateY(-2px)}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin:30px 0}
+.stat-card{background:#fff;padding:20px;border-radius:12px;text-align:center;box-shadow:0 2px 10px rgba(0,0,0,.1);color:#333}
+.stat-number{font-size:2.5em;font-weight:bold;color:#667eea;margin:10px 0}
+.feed{display:grid;gap:20px;margin:30px 0}
+.post{background:#fff;border-radius:12px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.1);color:#333}
+.post-header{display:flex;align-items:center;margin-bottom:15px;gap:12px}
+.avatar{width:45px;height:45px;border-radius:50%;background:linear-gradient(135deg,#667eea,#764ba2);display:flex;align-items:center;justify-content:center;color:#fff;font-weight:bold}
+.post-meta strong{display:block;color:#333}
+.post-meta small{color:#999}
+.post-content{margin:15px 0;line-height:1.6;color:#555}
+.post-actions{display:flex;gap:15px;margin-top:15px;padding-top:15px;border-top:1px solid #eee}
+.action-btn{background:0;border:none;color:#667eea;cursor:pointer;font-weight:600;padding:8px 12px;border-radius:6px}
+.action-btn:hover{background:#f0f0f0;color:#764ba2}
+.features{background:#fff;border-radius:12px;padding:30px;margin:30px 0;box-shadow:0 2px 10px rgba(0,0,0,.1);color:#333}
+.features h2{color:#667eea;margin-bottom:20px}
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
+.feature-item{padding:15px;border-left:4px solid #667eea;background:#f9f9f9;border-radius:6px}
+.feature-item h3{color:#667eea;margin-bottom:8px}
+.feature-item p{color:#666;font-size:.9em}
+footer{background:rgba(0,0,0,.1);color:#fff;text-align:center;padding:20px;margin-top:40px}
+</style>
 </head>
 <body>
-    <!-- Navigation -->
-    <nav class="navbar">
-        <div class="navbar-content">
-            <div class="logo">🚀 G-Network</div>
-            <ul class="nav-links">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#feed">Feed</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </div>
-    </nav>
-
-    <!-- Main Container -->
-    <div class="container">
-        <!-- Hero Section -->
-        <div class="hero" id="home">
-            <h1>Welcome to G-Network</h1>
-            <p>The Next-Generation Social Platform</p>
-            <button class="btn" onclick="createPost()">Create Post</button>
-            <button class="btn btn-secondary" onclick="exploreFeatures()">Explore Features</button>
-        </div>
-
-        <!-- Stats Section -->
-        <div class="stats">
-            <div class="stat-card">
-                <div class="stat-label">Active Users</div>
-                <div class="stat-number" id="users">1,247</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Posts Shared</div>
-                <div class="stat-number" id="posts">8,932</div>
-            </div>
-            <div class="stat-card">
-                <div class="stat-label">Messages Sent</div>
-                <div class="stat-number" id="messages">24,156</div>
-            </div>
-        </div>
-
-        <!-- Feed Section -->
-        <div id="feed">
-            <h2 style="color: white; margin: 20px 0;">📱 Social Feed</h2>
-            <div class="feed" id="posts-container">
-                <!-- Posts will be added here -->
-            </div>
-        </div>
-
-        <!-- Features Section -->
-        <div class="features" id="features">
-            <h2>✨ Platform Features</h2>
-            <div class="features-grid">
-                <div class="feature-item">
-                    <h3>📝 Create Posts</h3>
-                    <p>Share your thoughts, photos, and ideas with the community</p>
-                </div>
-                <div class="feature-item">
-                    <h3>💬 Real-time Chat</h3>
-                    <p>Instant messaging with friends and followers</p>
-                </div>
-                <div class="feature-item">
-                    <h3>👥 User Profiles</h3>
-                    <p>Customize your profile and connect with others</p>
-                </div>
-                <div class="feature-item">
-                    <h3>❤️ Like & Comment</h3>
-                    <p>Engage with content through likes and comments</p>
-                </div>
-                <div class="feature-item">
-                    <h3>🔔 Notifications</h3>
-                    <p>Stay updated with real-time notifications</p>
-                </div>
-                <div class="feature-item">
-                    <h3>📱 Responsive Design</h3>
-                    <p>Works perfectly on all devices and screen sizes</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Footer -->
-    <footer id="contact">
-        <p>&copy; 2024 G-Network. All rights reserved.</p>
-        <p>Built with ❤️ for the community</p>
-    </footer>
-
-    <script>
-        // Sample posts data
-        const samplePosts = [
-            {
-                author: 'John Doe',
-                avatar: 'JD',
-                time: '2 minutes ago',
-                content: 'Just deployed my G-Network app! 🎉 The platform is working perfectly with real-time features and beautiful design.'
-            },
-            {
-                author: 'Sarah Miller',
-                avatar: 'SM',
-                time: '5 minutes ago',
-                content: 'Love the new G-Network interface! Clean, modern, and super fast. Great work on the deployment! 🚀'
-            },
-            {
-                author: 'Alex Johnson',
-                avatar: 'AJ',
-                time: '10 minutes ago',
-                content: 'G-Network is the future of social media. Excited to be part of this amazing community! 🌟'
-            }
-        ];
-
-        // Initialize feed
-        function initializeFeed() {
-            const container = document.getElementById('posts-container');
-            samplePosts.forEach(post => {
-                const postEl = createPostElement(post);
-                container.appendChild(postEl);
-            });
-        }
-
-        // Create post element
-        function createPostElement(post) {
-            const div = document.createElement('div');
-            div.className = 'post';
-            div.innerHTML = `
-                <div class="post-header">
-                    <div class="avatar">${post.avatar}</div>
-                    <div class="post-meta">
-                        <strong>${post.author}</strong>
-                        <small>${post.time}</small>
-                    </div>
-                </div>
-                <div class="post-content">${post.content}</div>
-                <div class="post-actions">
-                    <button class="action-btn" onclick="likePost(this)">👍 Like</button>
-                    <button class="action-btn" onclick="commentPost()">💬 Comment</button>
-                    <button class="action-btn" onclick="sharePost()">🔄 Share</button>
-                </div>
-            `;
-            return div;
-        }
-
-        // Like post
-        function likePost(btn) {
-            btn.style.color = '#4CAF50';
-            btn.textContent = '👍 Liked!';
-            setTimeout(() => {
-                btn.style.color = '#667eea';
-                btn.textContent = '👍 Like';
-            }, 2000);
-        }
-
-        // Comment on post
-        function commentPost() {
-            const comment = prompt('Add a comment:');
-            if (comment) {
-                alert('Comment added: "' + comment + '" 💬');
-            }
-        }
-
-        // Share post
-        function sharePost() {
-            alert('Post shared successfully! 🔄');
-        }
-
-        // Create new post
-        function createPost() {
-            const content = prompt('What\'s on your mind?');
-            if (content) {
-                const newPost = {
-                    author: 'You',
-                    avatar: 'YOU',
-                    time: 'Just now',
-                    content: content
-                };
-                const container = document.getElementById('posts-container');
-                const postEl = createPostElement(newPost);
-                container.insertBefore(postEl, container.firstChild);
-                alert('Post created successfully! 📝');
-            }
-        }
-
-        // Explore features
-        function exploreFeatures() {
-            alert('🎉 G-Network Features:\n\n✅ Social Feed\n✅ Real-time Chat\n✅ User Profiles\n✅ Post Sharing\n✅ Modern Design\n✅ Mobile Responsive\n\nYour platform is fully deployed and ready!');
-        }
-
-        // Update stats
-        function updateStats() {
-            const users = document.getElementById('users');
-            const posts = document.getElementById('posts');
-            const messages = document.getElementById('messages');
-            
-            users.textContent = (parseInt(users.textContent.replace(',', '')) + Math.floor(Math.random() * 5)).toLocaleString();
-            posts.textContent = (parseInt(posts.textContent.replace(',', '')) + Math.floor(Math.random() * 10)).toLocaleString();
-            messages.textContent = (parseInt(messages.textContent.replace(',', '')) + Math.floor(Math.random() * 20)).toLocaleString();
-        }
-
-        // Initialize on page load
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeFeed();
-            setInterval(updateStats, 10000);
-            console.log('✅ G-Network loaded successfully!');
-            console.log('✅ All features working properly');
-        });
-    </script>
+<nav class="navbar">
+<div class="navbar-content">
+<div class="logo">🚀 Skynaire</div>
+<ul class="nav-links">
+<li><a href="#home">Home</a></li>
+<li><a href="#feed">Feed</a></li>
+<li><a href="#features">Features</a></li>
+</ul>
+</div>
+</nav>
+<div class="container">
+<div class="hero" id="home">
+<h1>Welcome to Skynaire</h1>
+<p>The Next-Generation Social Platform</p>
+<button class="btn" onclick="createPost()">Create Post</button>
+<button class="btn" onclick="alert('🎉 Skynaire Features: Social Feed, Real-time Chat, User Profiles, Post Sharing, Modern Design!')">Explore</button>
+</div>
+<div class="stats">
+<div class="stat-card">
+<div style="color:#999">Active Users</div>
+<div class="stat-number" id="users">1,247</div>
+</div>
+<div class="stat-card">
+<div style="color:#999">Posts Shared</div>
+<div class="stat-number" id="posts">8,932</div>
+</div>
+<div class="stat-card">
+<div style="color:#999">Messages Sent</div>
+<div class="stat-number" id="messages">24,156</div>
+</div>
+</div>
+<div id="feed">
+<h2 style="color:#fff;margin:20px 0">📱 Social Feed</h2>
+<div class="feed" id="posts-container"></div>
+</div>
+<div class="features" id="features">
+<h2>✨ Platform Features</h2>
+<div class="features-grid">
+<div class="feature-item"><h3>📝 Create Posts</h3><p>Share your thoughts and ideas</p></div>
+<div class="feature-item"><h3>💬 Real-time Chat</h3><p>Instant messaging with friends</p></div>
+<div class="feature-item"><h3>👥 User Profiles</h3><p>Customize your profile</p></div>
+<div class="feature-item"><h3>❤️ Like & Comment</h3><p>Engage with content</p></div>
+<div class="feature-item"><h3>🔔 Notifications</h3><p>Stay updated</p></div>
+<div class="feature-item"><h3>📱 Responsive</h3><p>Works on all devices</p></div>
+</div>
+</div>
+</div>
+<footer>
+<p>&copy; 2024 Skynaire. All rights reserved.</p>
+</footer>
+<script>
+const posts=[{author:'John Doe',avatar:'JD',time:'2 min ago',content:'Just deployed Skynaire! 🎉'},{author:'Sarah Miller',avatar:'SM',time:'5 min ago',content:'Love the new interface! 🚀'},{author:'Alex Johnson',avatar:'AJ',time:'10 min ago',content:'Skynaire is amazing! 🌟'}];
+function initFeed(){const c=document.getElementById('posts-container');posts.forEach(p=>{const d=document.createElement('div');d.className='post';d.innerHTML=`<div class="post-header"><div class="avatar">${p.avatar}</div><div class="post-meta"><strong>${p.author}</strong><small>${p.time}</small></div></div><div class="post-content">${p.content}</div><div class="post-actions"><button class="action-btn" onclick="like(this)">👍 Like</button><button class="action-btn" onclick="alert('💬 Comment added!')">💬 Comment</button><button class="action-btn" onclick="alert('🔄 Post shared!')">🔄 Share</button></div>`;c.appendChild(d)})}
+function like(b){b.style.color='#4CAF50';b.textContent='👍 Liked!';setTimeout(()=>{b.style.color='#667eea';b.textContent='👍 Like'},2000)}
+function createPost(){const c=prompt('What\'s on your mind?');if(c){const d=document.createElement('div');d.className='post';d.innerHTML=`<div class="post-header"><div class="avatar">YOU</div><div class="post-meta"><strong>You</strong><small>Just now</small></div></div><div class="post-content">${c}</div><div class="post-actions"><button class="action-btn" onclick="like(this)">👍 Like</button><button class="action-btn" onclick="alert('💬 Comment added!')">💬 Comment</button><button class="action-btn" onclick="alert('🔄 Post shared!')">🔄 Share</button></div>`;document.getElementById('posts-container').insertBefore(d,document.getElementById('posts-container').firstChild)}}
+function updateStats(){document.getElementById('users').textContent=(parseInt(document.getElementById('users').textContent.replace(',',''))+Math.floor(Math.random()*5)).toLocaleString();document.getElementById('posts').textContent=(parseInt(document.getElementById('posts').textContent.replace(',',''))+Math.floor(Math.random()*10)).toLocaleString();document.getElementById('messages').textContent=(parseInt(document.getElementById('messages').textContent.replace(',',''))+Math.floor(Math.random()*20)).toLocaleString()}
+document.addEventListener('DOMContentLoaded',()=>{initFeed();setInterval(updateStats,10000);console.log('✅ Skynaire loaded!')})
+</script>
 </body>
 </html>
