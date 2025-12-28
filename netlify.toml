@@ -1,38 +1,32 @@
 [build]
-  base = "frontend"
-  publish = "frontend/dist"
-  command = "npm run build"
-
-[build.environment]
-  NODE_VERSION = "18"
-
-# Force correct MIME types - Different syntax
-[[headers]]
-  for = "**/*.js"
-  [headers.values]
-    Content-Type = "text/javascript"
+  publish = "frontend/public"
+  command = "echo 'Skipping build - using static files'"
 
 [[headers]]
-  for = "**/*.mjs"
+  for = "/*"
   [headers.values]
-    Content-Type = "text/javascript"
+    Content-Type = "text/html; charset=utf-8"
 
 [[headers]]
-  for = "**/*.jsx"
+  for = "*.html"
   [headers.values]
-    Content-Type = "text/javascript"
+    Content-Type = "text/html; charset=utf-8"
 
 [[headers]]
-  for = "/src/**"
+  for = "*.js"
   [headers.values]
-    Content-Type = "text/javascript"
+    Content-Type = "text/javascript; charset=utf-8"
 
 [[headers]]
-  for = "**/*.css"
+  for = "*.css"
   [headers.values]
-    Content-Type = "text/css"
+    Content-Type = "text/css; charset=utf-8"
 
-# SPA redirect (must be last)
+[[headers]]
+  for = "*.json"
+  [headers.values]
+    Content-Type = "application/json; charset=utf-8"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
