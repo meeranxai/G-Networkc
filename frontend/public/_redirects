@@ -1,5 +1,8 @@
 /*    /index.html   200
 
+# Handle API calls (if backend is on different domain)
+/api/*  https://your-backend-url.com/api/:splat  200
+
 # Handle file extensions with proper MIME types
 /*.js   /*.js   200
 /*.css  /*.css  200
