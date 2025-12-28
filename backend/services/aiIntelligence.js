@@ -29,8 +29,20 @@ const CONFIG = {
     ENABLE_LOGGING: process.env.AI_ENABLE_LOGGING !== 'false'
 };
 
-// Initialize Groq client
-const groq = new Groq({ apiKey: CONFIG.GROQ_API_KEY });
+// Initialize Groq client only if API key is available
+let groq = null;
+const isGroqAvailable = CONFIG.GROQ_API_KEY && CONFIG.GROQ_API_KEY !== 'your_groq_api_key_here';
+
+if (isGroqAvailable) {
+    try {
+        groq = new Groq({ apiKey: CONFIG.GROQ_API_KEY });
+        console.log('✅ Groq AI initialized successfully');
+    } catch (error) {
+        console.warn('⚠️ Groq initialization failed:', error.message);
+    }
+} else {
+    console.warn('⚠️ Groq API key not configured - AI features will use fallback analysis');
+}
 
 // Initialize cache
 const cache = new NodeCache({ stdTTL: CONFIG.CACHE_TTL, checkperiod: 600 });
@@ -104,9 +116,15 @@ class ContentIntelligenceService {
      */
     static async performAnalysisWithRetry(description, imageFile, options, attempt = 1) {
         try {
+            // If Groq is not available, use fallback immediately
+            if (!isGroqAvailable || !groq) {
+                this.log('warn', '⚠️ Groq not available, using fallback analysis');
+                throw new Error('Groq API not configured');
+            }
+            
             return await this.analyzeWithGroq(description, imageFile, options);
         } catch (error) {
-            if (attempt < CONFIG.RETRY_ATTEMPTS) {
+            if (attempt < CONFIG.RETRY_ATTEMPTS && isGroqAvailable) {
                 this.log('warn', `⚠️ Retry attempt ${attempt}/${CONFIG.RETRY_ATTEMPTS}`);
                 await this.sleep(CONFIG.RETRY_DELAY * attempt);
                 return this.performAnalysisWithRetry(description, imageFile, options, attempt + 1);
@@ -524,6 +542,17 @@ Always respond with valid JSON matching the exact schema provided.`;
      */
     static async healthCheck() {
         try {
+            if (!isGroqAvailable) {
+                return {
+                    status: 'fallback',
+                    provider: 'Heuristic-Fallback',
+                    model: 'Built-in',
+                    message: 'Groq API not configured, using fallback analysis',
+                    lastCheck: new Date().toISOString(),
+                    metrics: this.getMetrics()
+                };
+            }
+
             const testAnalysis = await this.analyzeImage(null, 'health check test', { skipCache: true });
             return {
                 status: 'healthy',
@@ -535,6 +564,7 @@ Always respond with valid JSON matching the exact schema provided.`;
         } catch (error) {
             return {
                 status: 'degraded',
+                provider: 'Fallback',
                 error: error.message,
                 lastCheck: new Date().toISOString()
             };
