@@ -21,6 +21,27 @@ const app = express();
 const server = http.createServer(app);
 
 // ================================
+// FIREBASE ADMIN SETUP
+// ================================
+const admin = require('firebase-admin');
+try {
+    const serviceAccount = process.env.FIREBASE_SERVICE_ACCOUNT
+        ? JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT)
+        : (require('fs').existsSync('./config/serviceAccountKey.json') ? require('./config/serviceAccountKey.json') : null);
+
+    if (serviceAccount) {
+        admin.initializeApp({
+            credential: admin.credential.cert(serviceAccount)
+        });
+        console.log('✅ Firebase Admin Initialized');
+    } else {
+        console.warn('⚠️ Firebase Admin NOT initialized: No service account found.');
+    }
+} catch (error) {
+    console.error('❌ Firebase Admin Initialization Error:', error.message);
+}
+
+// ================================
 // SECURITY & MIDDLEWARE
 // ================================
 
