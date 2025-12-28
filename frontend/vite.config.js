@@ -7,13 +7,9 @@ export default defineConfig({
     build: {
         rollupOptions: {
             output: {
-                manualChunks: undefined,
-                entryFileNames: '[name].js',
-                chunkFileNames: '[name].js',
-                assetFileNames: '[name].[ext]'
+                manualChunks: undefined
             }
         },
-        assetsDir: '',
         sourcemap: false,
         minify: 'esbuild',
         target: 'es2015'
