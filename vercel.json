@@ -1,4 +1,4 @@
 {
-  "buildCommand": "echo 'Static deployment'",
-  "outputDirectory": "./frontend/public"
+  "buildCommand": "bash build.sh",
+  "outputDirectory": "dist"
 }
