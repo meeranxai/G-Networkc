@@ -12,7 +12,7 @@ import Messages from './pages/Messages';
 import DesignShowcase from './pages/DesignShowcase';
 import Archive from './pages/Archive';
 import Settings from './pages/SettingsComplete';
-import { useAuth } from './contexts/AuthContext';
+import { useAuth, AuthProvider } from './contexts/AuthContext';
 
 import { AutonomousThemeProvider } from './contexts/AutonomousThemeContext';
 import AutonomousTracker from './components/ai/AutonomousTracker';
@@ -38,40 +38,42 @@ import { ToastProvider } from './contexts/ToastContext';
 
 function App() {
     return (
-        <Router>
-            <ToastProvider>
-                <NavigationProvider>
-                    <Routes>
-                        <Route path="/login" element={<Login />} />
-                        <Route path="/design-showcase" element={<DesignShowcase />} />
+        <AuthProvider>
+            <Router>
+                <ToastProvider>
+                    <NavigationProvider>
+                        <Routes>
+                            <Route path="/login" element={<Login />} />
+                            <Route path="/design-showcase" element={<DesignShowcase />} />
 
-                        {/* Protected Routes */}
-                        <Route element={
-                            <ProtectedRoute>
-                                <AutonomousThemeProvider>
-                                    <AutonomousTracker />
-                                    <AIChatBot />
-                                    <Layout />
-                                </AutonomousThemeProvider>
-                            </ProtectedRoute>
-                        }>
-                            <Route path="/" element={<Home />} />
-                            <Route path="/profile" element={<Profile />} />
-                            <Route path="/profile/:uid" element={<Profile />} />
-                            <Route path="/explore" element={<Explore />} />
-                            <Route path="/reels" element={<Reels />} />
-                            <Route path="/notifications" element={<Notifications />} />
-                            <Route path="/messages" element={<Messages />} />
-                            <Route path="/create" element={<CreatePostPage />} />
-                            <Route path="/archive" element={<Archive />} />
-                            <Route path="/settings" element={<Settings />} />
-                        </Route>
+                            {/* Protected Routes */}
+                            <Route element={
+                                <ProtectedRoute>
+                                    <AutonomousThemeProvider>
+                                        <AutonomousTracker />
+                                        <AIChatBot />
+                                        <Layout />
+                                    </AutonomousThemeProvider>
+                                </ProtectedRoute>
+                            }>
+                                <Route path="/" element={<Home />} />
+                                <Route path="/profile" element={<Profile />} />
+                                <Route path="/profile/:uid" element={<Profile />} />
+                                <Route path="/explore" element={<Explore />} />
+                                <Route path="/reels" element={<Reels />} />
+                                <Route path="/notifications" element={<Notifications />} />
+                                <Route path="/messages" element={<Messages />} />
+                                <Route path="/create" element={<CreatePostPage />} />
+                                <Route path="/archive" element={<Archive />} />
+                                <Route path="/settings" element={<Settings />} />
+                            </Route>
 
-                        <Route path="*" element={<Navigate to="/" replace />} />
-                    </Routes>
-                </NavigationProvider>
-            </ToastProvider>
-        </Router>
+                            <Route path="*" element={<Navigate to="/" replace />} />
+                        </Routes>
+                    </NavigationProvider>
+                </ToastProvider>
+            </Router>
+        </AuthProvider>
     );
 }
 
