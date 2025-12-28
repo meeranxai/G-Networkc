@@ -114,12 +114,35 @@ connectDB();
 // HEALTH CHECK
 // ================================
 app.get('/health', (req, res) => {
+    try {
+        const healthStatus = {
+            status: 'OK',
+            timestamp: new Date().toISOString(),
+            uptime: process.uptime(),
+            environment: process.env.NODE_ENV || 'development',
+            mongodb: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected',
+            cors: {
+                configured: !!process.env.FRONTEND_URL || !!process.env.CORS_ORIGIN,
+                fallback: !process.env.FRONTEND_URL && !process.env.CORS_ORIGIN
+            }
+        };
+        
+        res.status(200).json(healthStatus);
+    } catch (error) {
+        res.status(500).json({
+            status: 'ERROR',
+            message: error.message,
+            timestamp: new Date().toISOString()
+        });
+    }
+});
+
+// Simple test endpoint
+app.get('/test', (req, res) => {
     res.status(200).json({
-        status: 'OK',
+        message: 'Backend is working!',
         timestamp: new Date().toISOString(),
-        uptime: process.uptime(),
-        environment: process.env.NODE_ENV,
-        mongodb: mongoose.connection.readyState === 1 ? 'Connected' : 'Disconnected'
+        origin: req.headers.origin || 'No origin header'
     });
 });
 

@@ -6,20 +6,16 @@ const connectDB = async () => {
         
         // Validate MongoDB URI format
         if (!MONGO_URI.includes('mongodb')) {
-            throw new Error('Invalid MongoDB URI format');
+            console.warn('⚠️ Invalid MongoDB URI format, skipping database connection');
+            return;
         }
         
         await mongoose.connect(MONGO_URI);
         console.log('✅ MongoDB Connected Successfully');
     } catch (err) {
         console.error('❌ MongoDB Connection Error:', err.message);
-        
-        // Don't exit in production, let the app run without DB for now
-        if (process.env.NODE_ENV !== 'production') {
-            process.exit(1);
-        } else {
-            console.warn('⚠️ Running without database connection in production');
-        }
+        console.warn('⚠️ Running without database connection');
+        // Don't exit, let the app run without DB
     }
 };
 
