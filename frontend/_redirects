@@ -1,6 +1,1 @@
 /*    /index.html   200
-
-# Handle file extensions with proper MIME types
-/*.js   /*.js   200
-/*.css  /*.css  200
-/*.json /*.json 200

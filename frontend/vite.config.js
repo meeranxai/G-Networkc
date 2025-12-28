@@ -8,14 +8,14 @@ export default defineConfig({
         rollupOptions: {
             output: {
                 manualChunks: undefined,
-                entryFileNames: 'assets/[name]-[hash].js',
-                chunkFileNames: 'assets/[name]-[hash].js',
-                assetFileNames: 'assets/[name]-[hash].[ext]'
+                entryFileNames: '[name].js',
+                chunkFileNames: '[name].js',
+                assetFileNames: '[name].[ext]'
             }
         },
-        assetsDir: 'assets',
+        assetsDir: '',
         sourcemap: false,
-        minify: 'terser',
+        minify: 'esbuild',
         target: 'es2015'
     },
     server: {

@@ -1,24 +1,23 @@
-/*.js
-  Content-Type: text/javascript; charset=utf-8
+*.js
+  Content-Type: text/javascript
 
-/*.mjs
-  Content-Type: text/javascript; charset=utf-8
+*.mjs
+  Content-Type: text/javascript
 
-/*.jsx
-  Content-Type: text/javascript; charset=utf-8
+*.jsx
+  Content-Type: text/javascript
 
 /assets/*.js
-  Content-Type: text/javascript; charset=utf-8
+  Content-Type: text/javascript
 
 /src/*.jsx
-  Content-Type: text/javascript; charset=utf-8
+  Content-Type: text/javascript
 
-/*.css
-  Content-Type: text/css; charset=utf-8
+*.css
+  Content-Type: text/css
 
-/manifest.json
-  Content-Type: application/manifest+json; charset=utf-8
-  Cache-Control: public, max-age=3600
+*.json
+  Content-Type: application/json
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
