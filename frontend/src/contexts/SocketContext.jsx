@@ -5,7 +5,19 @@ import { useAuth } from './AuthContext';
 
 const SocketContext = createContext();
 
-export const useSocket = () => useContext(SocketContext);
+export const useSocket = () => {
+    const context = useContext(SocketContext);
+    if (!context) {
+        console.error('❌ useSocket called outside SocketProvider');
+        // Return safe defaults instead of throwing
+        return { 
+            socket: null, 
+            onlineUsers: {},
+            isConnected: false 
+        };
+    }
+    return context;
+};
 
 export const SocketProvider = ({ children }) => {
     const { currentUser } = useAuth();

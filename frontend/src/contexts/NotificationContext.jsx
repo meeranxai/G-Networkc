@@ -5,7 +5,19 @@ import { API_BASE_URL } from '../api/config';
 
 const NotificationContext = createContext();
 
-export const useNotifications = () => useContext(NotificationContext);
+export const useNotifications = () => {
+    const context = useContext(NotificationContext);
+    if (!context) {
+        console.error('❌ useNotifications called outside NotificationProvider');
+        // Return safe defaults instead of throwing
+        return { 
+            unreadMessageCount: 0, 
+            unreadNotificationCount: 0, 
+            refreshNotifications: () => {} 
+        };
+    }
+    return context;
+};
 
 export const NotificationProvider = ({ children }) => {
     const { currentUser } = useAuth();
