@@ -9,7 +9,8 @@ export function useAuth() {
     const context = useContext(AuthContext);
     if (!context) {
         console.error('❌ useAuth called outside AuthProvider. Make sure component is wrapped with AuthProvider.');
-        throw new Error('useAuth must be used within an AuthProvider');
+        // Return default values instead of throwing to prevent destructuring errors
+        return { currentUser: null, loading: true };
     }
     return context;
 }
@@ -115,77 +116,6 @@ export function AuthProvider({ children }) {
             unsubscribe();
         };
     }, [authInitialized]);
-
-        // 1. Listen for auth state changes immediately
-        const unsubscribe = onAuthStateChanged(auth, async (user) => {
-            if (!isMounted) return;
-
-            console.log("🔄 Auth State Changed:", user ? `Logged in as ${user.email}` : "Logged out");
-            
-            if (user) {
-                setCurrentUser(user);
-                setLoading(false);
-
-                try {
-                    console.log("Syncing user with backend...");
-                    const res = await fetch(`${API_BASE_URL}/api/users/sync`, {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({
-                            firebaseUid: user.uid,
-                            email: user.email,
-                            displayName: user.displayName || 'New User',
-                            photoURL: user.photoURL
-                        })
-                    });
-
-                    if (res.ok) {
-                        console.log("✅ User Synced with Backend");
-                    } else {
-                        const errorData = await res.json().catch(() => ({}));
-                        console.error("❌ Sync Error:", res.status, errorData);
-                    }
-                } catch (err) {
-                    console.error("❌ Failed to sync user:", err);
-                }
-            } else {
-                setCurrentUser(null);
-                // Only set loading false if we're not waiting for a redirect result
-                if (redirectCheckDone) {
-                    setLoading(false);
-                }
-            }
-        });
-
-        // 2. Check for redirect results in the background
-        const checkRedirect = async () => {
-            try {
-                console.log("🔍 Checking for redirect result...");
-                const result = await getRedirectResult(auth);
-                if (result && isMounted) {
-                    console.log("✅ Redirect result captured:", result.user.email);
-                    setCurrentUser(result.user);
-                }
-            } catch (err) {
-                console.error("❌ Global Redirect Error:", err);
-            } finally {
-                redirectCheckDone = true;
-                // If we're logged out, now we can safely stop loading
-                if (isMounted && !auth.currentUser) {
-                    setLoading(false);
-                }
-            }
-        };
-
-        checkRedirect();
-
-        return () => {
-            isMounted = false;
-            unsubscribe();
-        };
-    }, []);
 
     const value = {
         currentUser,
