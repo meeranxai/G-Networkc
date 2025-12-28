@@ -4,30 +4,52 @@
 1. ❌ MongoDB URI missing/invalid
 2. ❌ Firebase Admin service account missing  
 3. ❌ Groq API key missing
+4. ❌ CORS not configured for Vercel domain
 
 ## Required Environment Variables for Railway:
 
-### 1. MongoDB Configuration
+### 1. CORS & Frontend Configuration (CRITICAL)
 ```
-MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/gnetwork?retryWrites=true&w=majority
-```
-
-### 2. Firebase Admin SDK
-```
-FIREBASE_SERVICE_ACCOUNT={"type":"service_account","project_id":"g-network-community","private_key_id":"...","private_key":"-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n","client_email":"firebase-adminsdk-...@g-network-community.iam.gserviceaccount.com","client_id":"...","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_x509_cert_url":"https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-...%40g-network-community.iam.gserviceaccount.com"}
-```
-
-### 3. Basic Configuration
-```
-NODE_ENV=production
-PORT=5000
 FRONTEND_URL=https://mygwnetwork.vercel.app
 CORS_ORIGIN=https://mygwnetwork.vercel.app
 ```
 
-### 4. Optional (AI Features)
+### 2. MongoDB Configuration
+```
+MONGO_URI=mongodb+srv://username:password@cluster.mongodb.net/gnetwork?retryWrites=true&w=majority
+```
+
+### 3. Firebase Admin SDK
+```
+FIREBASE_SERVICE_ACCOUNT={"type":"service_account","project_id":"g-network-community","private_key_id":"...","private_key":"-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n","client_email":"firebase-adminsdk-...@g-network-community.iam.gserviceaccount.com","client_id":"...","auth_uri":"https://accounts.google.com/o/oauth2/auth","token_uri":"https://oauth2.googleapis.com/token","auth_provider_x509_cert_url":"https://www.googleapis.com/oauth2/v1/certs","client_x509_cert_url":"https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-...%40g-network-community.iam.gserviceaccount.com"}
+```
+
+### 4. Basic Configuration
+```
+NODE_ENV=production
+PORT=5000
+```
+
+### 5. Optional (AI Features)
 ```
 GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
+```
+
+## URGENT: Fix CORS Issue
+
+The backend is running but CORS is blocking requests from your Vercel domain.
+
+### Quick Fix Commands:
+```bash
+# MOST IMPORTANT - Fix CORS
+railway variables set FRONTEND_URL="https://mygwnetwork.vercel.app"
+railway variables set CORS_ORIGIN="https://mygwnetwork.vercel.app"
+
+# Set MongoDB URI
+railway variables set MONGO_URI="your_mongodb_connection_string"
+
+# Set Firebase Service Account (escape quotes)
+railway variables set FIREBASE_SERVICE_ACCOUNT='{"type":"service_account",...}'
 ```
 
 ## Steps to Fix:
@@ -50,21 +72,11 @@ GROQ_API_KEY=gsk_xxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 2. Select your backend service
 3. Go to Variables tab
 4. Add all required environment variables
-
-## Quick Fix Commands:
-```bash
-# Set MongoDB URI
-railway variables set MONGO_URI="your_mongodb_connection_string"
-
-# Set Firebase Service Account (escape quotes)
-railway variables set FIREBASE_SERVICE_ACCOUNT='{"type":"service_account",...}'
-
-# Set CORS origin
-railway variables set CORS_ORIGIN="https://mygwnetwork.vercel.app"
-railway variables set FRONTEND_URL="https://mygwnetwork.vercel.app"
-```
+5. **REDEPLOY** after adding variables
 
 ## Status:
+- ✅ Backend is running (health check responds)
+- ❌ CORS blocking requests from Vercel domain
 - ⏳ Environment variables need to be configured in Railway dashboard
 - ⏳ MongoDB Atlas connection string required
 - ⏳ Firebase service account JSON required

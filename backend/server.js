@@ -53,12 +53,19 @@ app.use(helmet({
 // CORS Configuration
 const corsOptions = {
     origin: process.env.NODE_ENV === 'production'
-        ? process.env.FRONTEND_URL
+        ? (process.env.FRONTEND_URL || process.env.CORS_ORIGIN || 'https://mygwnetwork.vercel.app')
         : ['http://localhost:5173', 'http://localhost:3000', 'http://localhost:5174'],
     credentials: true,
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'],
     allowedHeaders: ['Content-Type', 'Authorization']
 };
+
+// Fallback CORS for production if environment variables not set
+if (process.env.NODE_ENV === 'production' && !process.env.FRONTEND_URL && !process.env.CORS_ORIGIN) {
+    console.warn('⚠️ FRONTEND_URL not set, using fallback CORS configuration');
+    corsOptions.origin = ['https://mygwnetwork.vercel.app', 'https://mygwnetwork-227iteo97-my-world-741435e1.vercel.app'];
+}
+
 app.use(cors(corsOptions));
 
 // Request logging
