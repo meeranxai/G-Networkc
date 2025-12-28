@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 import { useAuth } from './AuthContext';
 import { useSocket } from './SocketContext';
 import { API_BASE_URL } from '../api/config';
+import { mockFetch } from '../api/mockBackend';
 
 const NotificationContext = createContext();
 
@@ -41,9 +42,8 @@ export const NotificationProvider = ({ children }) => {
 
         const fetchCounts = async () => {
             try {
-                // 1. Fetch Chat Unread Map
-                // expect [{ chatId: "...", unreadCount: 5 }, ...]
-                const chatRes = await fetch(`${API_BASE_URL}/api/chat/unread-counts/${currentUser.uid}`);
+                // 1. Fetch Chat Unread Map using mock backend
+                const chatRes = await mockFetch(`${API_BASE_URL}/api/chat/unread-counts/${currentUser.uid}`);
                 if (chatRes.ok) {
                     const chats = await chatRes.json();
                     const map = {};
@@ -56,9 +56,8 @@ export const NotificationProvider = ({ children }) => {
                     setUnreadMessageCount(total);
                 }
 
-                // 2. Fetch General Notification Count
-                // expect { count: 3 }
-                const notifRes = await fetch(`${API_BASE_URL}/api/notifications/unread-count/${currentUser.uid}`);
+                // 2. Fetch General Notification Count using mock backend
+                const notifRes = await mockFetch(`${API_BASE_URL}/api/notifications/unread-count/${currentUser.uid}`);
                 if (notifRes.ok) {
                     const data = await notifRes.json();
                     setUnreadNotificationCount(data.count);
@@ -122,10 +121,10 @@ export const NotificationProvider = ({ children }) => {
 
     // Cleanup or manual refresh
     const refreshNotifications = async () => {
-        // Re-fetch logic if needed
+        // Re-fetch logic if needed using mock backend
         if (!currentUser) return;
         try {
-            const notifRes = await fetch(`${API_BASE_URL}/api/notifications/unread-count/${currentUser.uid}`);
+            const notifRes = await mockFetch(`${API_BASE_URL}/api/notifications/unread-count/${currentUser.uid}`);
             if (notifRes.ok) {
                 const data = await notifRes.json();
                 setUnreadNotificationCount(data.count);
