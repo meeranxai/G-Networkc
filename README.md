@@ -49,8 +49,8 @@ G-Network/
 │   │   └── index-fallback.html   ← Fallback version
 │   └── server.js                 ← Local dev server
 ├── backend/
-│   ├── server-simple.js          ← Simple backend
-│   ├── package-simple.json       ← Backend dependencies
+│   ├── server.js                ← Main backend
+│   ├── package.json             ← Backend dependencies
 │   └── services/
 ├── vercel.json                   ← Vercel configuration
 ├── VERCEL_DEPLOYMENT.md          ← Deployment guide

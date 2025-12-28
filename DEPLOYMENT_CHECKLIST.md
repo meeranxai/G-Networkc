@@ -25,7 +25,6 @@
 
 ### Files
 - ✅ `backend/server.js` - Main server
-- ✅ `backend/server-simple.js` - Simple version
 - ✅ `backend/package.json` - Dependencies
 - ✅ `backend/.env` - Environment variables
 - ✅ `backend/services/` - Business logic

@@ -6,7 +6,11 @@ import { onAuthStateChanged, getRedirectResult } from 'firebase/auth';
 const AuthContext = createContext();
 
 export function useAuth() {
-    return useContext(AuthContext);
+    const context = useContext(AuthContext);
+    if (!context) {
+        throw new Error('useAuth must be used within an AuthProvider');
+    }
+    return context;
 }
 
 export function AuthProvider({ children }) {
@@ -15,6 +19,14 @@ export function AuthProvider({ children }) {
 
     useEffect(() => {
         console.log("🔑 Initializing Auth Listener...");
+        
+        // Check if Firebase auth is properly initialized
+        if (!auth) {
+            console.error("❌ Firebase auth is not initialized");
+            setLoading(false);
+            return;
+        }
+
         let isMounted = true;
         let redirectCheckDone = false;
 

@@ -4,9 +4,8 @@
     "description": "Social Media Backend for G-Network",
     "main": "server.js",
     "scripts": {
-        "start": "node server-simple.js",
+        "start": "node server.js",
         "dev": "nodemon server.js",
-        "simple": "node server-simple.js",
         "full": "node server.js",
         "health-check": "node health-check.js"
     },
