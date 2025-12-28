@@ -2,7 +2,6 @@ import React, { createContext, useState, useEffect, useContext } from 'react';
 import { API_BASE_URL } from '../api/config';
 import { auth } from '../firebase';
 import { onAuthStateChanged, getRedirectResult } from 'firebase/auth';
-import { mockFetch } from '../api/mockBackend';
 
 const AuthContext = createContext();
 
@@ -58,9 +57,7 @@ export function AuthProvider({ children }) {
 
                 try {
                     console.log("Syncing user with backend...");
-                    
-                    // Use mock backend for now
-                    const res = await mockFetch(`${API_BASE_URL}/api/users/sync`, {
+                    const res = await fetch(`${API_BASE_URL}/api/users/sync`, {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
