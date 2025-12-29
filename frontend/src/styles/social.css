@@ -261,8 +261,8 @@ body.social-app.settings-view #root {
 }
 
 .user-profile-name {
-    fontWeight: 700;
-    fontSize: 13px;
+    font-weight: 700;
+    font-size: 13px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -270,11 +270,72 @@ body.social-app.settings-view #root {
 }
 
 .user-profile-label {
-    fontSize: 11px;
+    font-size: 11px;
     color: var(--text-tertiary);
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+/* Sidebar Footer & Utilities */
+.sidebar-footer {
+    margin-top: auto;
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--border-light);
+}
+
+.sidebar-theme-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 var(--space-4);
+    margin-bottom: var(--space-4);
+}
+
+.sidebar-theme-label {
+    font-size: var(--text-sm);
+    color: var(--text-secondary);
+}
+
+.unread-badge {
+    background: var(--primary);
+    color: white;
+    font-size: 0.75rem;
+    padding: 2px 8px;
+    border-radius: 99px;
+    font-weight: 700;
+    margin-left: auto;
+}
+
+.social-brand-dot {
+    color: var(--primary);
+}
+
+/* Server Warning */
+.offline-server-warning {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    background: var(--error);
+    color: white;
+    padding: 10px;
+    text-align: center;
+    z-index: 99999;
+    font-weight: 600;
+}
+
+.main-content-wrapper {
+    flex: 1;
+    min-width: 0;
+}
+
+.main-content-wrapper.full-height {
+    height: 100vh;
+}
+
+.main-content-wrapper.full-width {
+    max-width: 100%;
 }
 
 .btn-signout {

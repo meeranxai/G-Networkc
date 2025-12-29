@@ -201,6 +201,29 @@ io.on('connection', (socket) => {
         }
     });
 
+    // User activity update
+    socket.on('user_activity_update', async (data) => {
+        try {
+            const user = await User.findOne({ socketIds: socket.id });
+            if (user) {
+                user.isActive = data.isActive;
+                user.lastSeen = new Date();
+                await user.save();
+
+                io.emit('user_presence_changed', {
+                    firebaseUid: user.firebaseUid,
+                    displayName: user.displayName,
+                    photoURL: user.photoURL,
+                    isOnline: true,
+                    isActive: data.isActive,
+                    lastSeen: user.lastSeen
+                });
+            }
+        } catch (err) {
+            console.error('Error in user_activity_update:', err);
+        }
+    });
+
     // WebRTC Signaling
     socket.on("call_user", ({ userToCall, signalData, from, name }) => {
         io.to(userToCall).emit("call_user", { signal: signalData, from, name });

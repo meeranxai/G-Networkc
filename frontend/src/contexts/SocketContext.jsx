@@ -63,6 +63,16 @@ export const SocketProvider = ({ children }) => {
         connectionAttempts.current = 0;
     }, []);
 
+    // Track activity separately to avoid socket recreation
+    useEffect(() => {
+        if (socket && isConnected && userActivity) {
+            socket.emit('user_activity_update', {
+                isActive: userActivity.isActive,
+                lastActivity: userActivity.lastActivity
+            });
+        }
+    }, [socket, isConnected, userActivity]);
+
     useEffect(() => {
         if (!currentUser) {
             disconnectSocket();
@@ -76,7 +86,8 @@ export const SocketProvider = ({ children }) => {
         const newSocket = io(SOCKET_URL, {
             transports: ['websocket', 'polling'], // Allow fallback to polling
             upgrade: true, // Allow transport upgrades
-            reconnectionAttempts: 5,
+            reconnection: true, // Enable automatic reconnection
+            reconnectionAttempts: 10, // Increased attempts
             reconnectionDelay: 1000,
             reconnectionDelayMax: 5000,
             timeout: 20000, // Increased timeout
@@ -113,9 +124,9 @@ export const SocketProvider = ({ children }) => {
                 displayName: currentUser.displayName,
                 email: currentUser.email,
                 photoURL: currentUser.photoURL,
-                isActive: userActivity?.isActive || true,
-                lastActivity: userActivity?.lastActivity || new Date(),
-                sessionStart: userActivity?.sessionStart || new Date()
+                isActive: true, // Initial online status
+                lastActivity: new Date(),
+                sessionStart: new Date()
             });
             
             // Join personal room for notifications
@@ -145,15 +156,12 @@ export const SocketProvider = ({ children }) => {
                 heartbeatIntervalRef.current = null;
             }
 
-            // Handle different disconnect reasons
-            if (reason === 'io server disconnect' || reason === 'transport close' || reason === 'ping timeout') {
-                // For these reasons, we might want to attempt manual reconnection
-                console.log(`🔄 Attempting manual reconnection due to ${reason}`);
-                setTimeout(() => {
-                    if (newSocket && !newSocket.connected && currentUser) {
-                        newSocket.connect();
-                    }
-                }, 2000);
+            // NOTE: socket.io-client handles reconnection automatically.
+            // We only manually connect if it was a server-side disconnect 
+            // and we still have a user.
+            if (reason === 'io server disconnect') {
+                console.log('🔄 Server disconnected the socket. Attempting manual reconnect...');
+                newSocket.connect();
             }
         });
 
@@ -165,8 +173,8 @@ export const SocketProvider = ({ children }) => {
         });
 
         newSocket.on('reconnect_attempt', (attemptNumber) => {
-            // Only log every 2nd attempt to reduce noise
-            if (attemptNumber % 2 === 0) {
+            // Only log every 5th attempt to reduce noise
+            if (attemptNumber % 5 === 0) {
                 console.log(`🔄 Socket Reconnection attempt: ${attemptNumber}`);
             }
             setConnectionStatus('reconnecting');
@@ -179,7 +187,7 @@ export const SocketProvider = ({ children }) => {
             // Try one last time with polling transport if not already attempted
             if (!newSocket.io.opts.transports.includes('polling')) {
                 console.log('🔄 Attempting final fallback connection with polling transport');
-                newSocket.io.opts.transports = ['polling'];
+                newSocket.io.opts.transports = ['polling', 'websocket'];
                 setTimeout(() => {
                     if (currentUser && !newSocket.connected) {
                         newSocket.connect();
@@ -248,24 +256,7 @@ export const SocketProvider = ({ children }) => {
             setIsConnected(false);
             setConnectionStatus('disconnected');
         };
-    }, [currentUser?.uid]); // Only depend on UID to avoid re-running on user object changes
-
-    // Update user activity status via socket with throttling
-    const lastActivityUpdate = useRef(0);
-    useEffect(() => {
-        if (socket && currentUser && userActivity && isConnected) {
-            const now = Date.now();
-            // Throttle activity updates to every 5 seconds
-            if (now - lastActivityUpdate.current > 5000) {
-                socket.emit('user_activity_update', {
-                    firebaseUid: currentUser.uid,
-                    isActive: userActivity.isActive,
-                    lastActivity: userActivity.lastActivity
-                });
-                lastActivityUpdate.current = now;
-            }
-        }
-    }, [socket, currentUser, userActivity?.isActive, userActivity?.lastActivity, isConnected]);
+    }, [currentUser]);
 
     const sendMessage = useCallback((chatId, recipientId, text, mediaUrl = null, mediaType = 'text', replyTo = null) => {
         if (!socket || !currentUser || !isConnected) {

@@ -66,7 +66,7 @@ const Layout = () => {
     return (
         <React.Fragment>
             {serverStatus === 'offline' && (
-                <div style={{ position: 'fixed', top: 0, left: 0, right: 0, background: 'red', color: 'white', padding: '10px', textAlign: 'center', zIndex: 99999 }}>
+                <div className="offline-server-warning">
                     ⚠️ Cannot connect to Backend. API URL: {API_BASE_URL || 'Not Set'}
                 </div>
             )}
@@ -74,7 +74,7 @@ const Layout = () => {
                 {!isChatPage && !isSettingsPage && <LeftSidebar />}
 
                 {/* Main Content Area */}
-                <div className="main-content-wrapper" style={{ flex: 1, minWidth: 0, height: isChatPage ? '100vh' : 'auto', maxWidth: isSettingsPage ? '100%' : undefined }}>
+                <div className={`main-content-wrapper ${isChatPage ? 'full-height' : ''} ${isSettingsPage ? 'full-width' : ''}`}>
                     <Outlet />
                 </div>
 

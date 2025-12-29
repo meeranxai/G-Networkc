@@ -15,7 +15,7 @@ const LeftSidebar = () => {
     return (
         <aside className="sidebar-left">
             <div className="social-brand">
-                <h1>G-Network<span style={{ color: 'var(--primary)' }}>.</span></h1>
+                <h1>G-Network<span className="social-brand-dot">.</span></h1>
             </div>
 
             <nav className="nav-links">
@@ -34,7 +34,7 @@ const LeftSidebar = () => {
                 </NavLink>
                 <NavLink to="/messages" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     <i className="fas fa-envelope"></i> <span>Messages</span>
-                    {unreadMessageCount > 0 && <span className="unread-badge" style={{ background: 'var(--primary)', color: 'white' }}>{unreadMessageCount}</span>}
+                    {unreadMessageCount > 0 && <span className="unread-badge">{unreadMessageCount}</span>}
                 </NavLink>
                 <NavLink to="/profile" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
                     <i className="fas fa-user"></i> <span>Profile</span>
@@ -47,13 +47,13 @@ const LeftSidebar = () => {
                 </NavLink>
             </nav>
 
-            <div style={{ marginTop: 'auto', paddingTop: 'var(--space-4)', borderTop: '1px solid var(--border-light)' }}>
+            <div className="sidebar-footer">
                 <InstallPWA />
-                <NavLink to="/design-showcase" className="nav-item" style={{ marginBottom: 'var(--space-3)' }}>
+                <NavLink to="/design-showcase" className="nav-item">
                     <i className="fas fa-palette"></i> <span>Design System</span>
                 </NavLink>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 var(--space-4)', marginBottom: 'var(--space-4)' }}>
-                    <span style={{ fontSize: 'var(--text-sm)', color: 'var(--text-secondary)' }}>Theme</span>
+                <div className="sidebar-theme-row">
+                    <span className="sidebar-theme-label">Theme</span>
                     <DarkModeToggle />
                 </div>
             </div>
@@ -85,7 +85,7 @@ const LeftSidebar = () => {
                 </div>
             )}
 
-            <NavLink to="/create" className="btn-post-main" style={{ textAlign: 'center', textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+            <NavLink to="/create" className="btn-post-main">
                 <i className="fas fa-pen-nib"></i> Post
             </NavLink>
         </aside>
