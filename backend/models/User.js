@@ -62,8 +62,13 @@ const UserSchema = new mongoose.Schema({
     },
 
     techStack: [String],
+    
+    // Activity & Presence Tracking
     isOnline: { type: Boolean, default: false },
+    isActive: { type: Boolean, default: false },
     lastSeen: { type: Date, default: Date.now },
+    lastActivity: { type: Date, default: Date.now },
+    sessionStart: { type: Date },
     socketIds: [{ type: String }],
 
     // B. PRIVACY & SECURITY SETTINGS

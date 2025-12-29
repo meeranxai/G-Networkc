@@ -146,6 +146,63 @@ router.post('/sync', async (req, res) => {
     }
 });
 
+// @route   POST /api/users/activity
+// @desc    Update user activity status
+router.post('/activity', async (req, res) => {
+    try {
+        const { firebaseUid, isActive, isOnline, lastActivity, lastSeen } = req.body;
+        
+        if (!firebaseUid) {
+            return res.status(400).json({ message: 'Firebase UID is required' });
+        }
+
+        const updateData = {};
+        
+        if (typeof isActive !== 'undefined') {
+            updateData.isActive = isActive;
+        }
+        
+        if (typeof isOnline !== 'undefined') {
+            updateData.isOnline = isOnline;
+        }
+        
+        if (lastActivity) {
+            updateData.lastActivity = new Date(lastActivity);
+        }
+        
+        if (lastSeen) {
+            updateData.lastSeen = new Date(lastSeen);
+        }
+
+        const user = await User.findOneAndUpdate(
+            { firebaseUid },
+            updateData,
+            { new: true }
+        );
+
+        if (!user) {
+            return res.status(404).json({ message: 'User not found' });
+        }
+
+        console.log(`[Activity] Updated activity for ${user.displayName}: active=${isActive}, online=${isOnline}`);
+        
+        res.json({ 
+            success: true, 
+            message: 'Activity updated',
+            user: {
+                firebaseUid: user.firebaseUid,
+                isActive: user.isActive,
+                isOnline: user.isOnline,
+                lastActivity: user.lastActivity,
+                lastSeen: user.lastSeen
+            }
+        });
+    } catch (err) {
+        console.error('[Activity] Error:', err);
+        res.status(500).json({ message: err.message });
+    }
+});
+
 // @route   GET /api/users/check-username/:username
 router.get('/check-username/:username', async (req, res) => {
     try {
