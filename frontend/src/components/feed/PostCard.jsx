@@ -297,28 +297,27 @@ const PostCard = ({ post, onUpdate, feedType = 'home' }) => {
     };
 
     return (
-        <article className="card post-card" style={{ marginBottom: 'var(--space-6)', borderRadius: 'var(--radius-xl)', overflow: 'hidden', position: 'relative', background: 'var(--background-elevated)', border: 'none', boxShadow: 'var(--shadow-md)' }}>
-
+        <article className="post-card" style={{ marginBottom: 'var(--space-6)', borderRadius: 'var(--radius-xl)', overflow: 'hidden', position: 'relative', background: 'var(--background-elevated)', border: 'none', boxShadow: 'var(--shadow-md)' }}>
             {/* Header */}
-            <div className="card-header" style={{ padding: '15px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'transparent' }}>
-                <NavLink to={`/profile/${post.authorId}`} style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit', flex: 1 }}>
-                    <div style={{ position: 'relative' }}>
-                        <img src={getMediaUrl(post.authorAvatar)} alt="" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid var(--primary-light)', objectFit: 'cover' }} />
-                        <div style={{ position: 'absolute', bottom: 0, right: 0, width: '12px', height: '12px', background: '#10b981', border: '2px solid #fff', borderRadius: '50%' }}></div>
+            <div className="post-header" style={{ padding: '15px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'transparent' }}>
+                <NavLink to={`/profile/${post.authorId}`} className="post-author-link" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit', flex: 1 }}>
+                    <div className="post-avatar-container" style={{ position: 'relative' }}>
+                        <img className="post-avatar" src={getMediaUrl(post.authorAvatar)} alt="" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid var(--primary-light)', objectFit: 'cover' }} />
+                        <div className="online-badge" style={{ position: 'absolute', bottom: 0, right: 0, width: '12px', height: '12px', background: '#10b981', border: '2px solid #fff', borderRadius: '50%' }}></div>
                     </div>
-                    <div>
-                        <div style={{ fontWeight: '800', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--text-primary)' }}>
+                    <div className="post-meta">
+                        <div className="post-author-name" style={{ fontWeight: '800', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--text-primary)' }}>
                             {post.author}
                             <i className="fas fa-check-circle" style={{ color: 'var(--primary)', fontSize: '12px' }}></i>
                             {postData.isRepost && (
-                                <span style={{ fontSize: '12px', color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <span className="repost-badge" style={{ fontSize: '12px', color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
                                     <i className="fas fa-retweet"></i> Reposted
                                 </span>
                             )}
                         </div>
-                        <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontWeight: '500' }}>
+                        <div className="post-meta-info" style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontWeight: '500' }}>
                             <i className={`fas fa-${postData.visibility === 'public' ? 'globe-americas' : 'users'}`} style={{ marginRight: '4px' }}></i>
-                            {post.category} • {new Date(post.createdAt).toLocaleDateString()}
+                            {post.category} <span className="separator">•</span> {new Date(post.createdAt).toLocaleDateString()}
                         </div>
                     </div>
                 </NavLink>

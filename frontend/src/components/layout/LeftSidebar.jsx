@@ -59,39 +59,25 @@ const LeftSidebar = () => {
             </div>
 
             {currentUser && (
-                <div className="user-profile-tile glass-panel" style={{
-                    padding: '10px 14px',
-                    borderRadius: '50px',
-                    background: 'var(--surface-glass)',
-                    backdropFilter: 'blur(10px)',
-                    marginBottom: '20px',
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '12px',
-                    border: '1px solid var(--border-light)',
-                    transition: 'transform 0.2s ease, box-shadow 0.2s ease',
-                    cursor: 'pointer',
-                    boxShadow: 'var(--shadow-sm)'
-                }} onClick={() => navigate('/profile')}>
+                <div className="user-profile-tile" onClick={() => navigate('/profile')}>
                     <img
                         src={getMediaUrl(currentUser.photoURL) || '/images/default-avatar.png'}
                         alt=""
-                        style={{ width: '40px', height: '40px', borderRadius: '50%', objectFit: 'cover' }}
                     />
-                    <div style={{ flex: 1, minWidth: 0 }}>
-                        <div style={{ fontWeight: 700, fontSize: '13px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <div className="user-profile-info">
+                        <div className="user-profile-name">
                             {currentUser.displayName || 'G-User'}
                         </div>
-                        <div style={{ fontSize: '11px', color: 'var(--text-tertiary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                        <div className="user-profile-label">
                             View Profile
                         </div>
                     </div>
                     <button
+                        className="btn-signout"
                         onClick={(e) => {
                             e.stopPropagation();
                             auth.signOut();
                         }}
-                        style={{ background: 'transparent', border: 'none', color: 'var(--text-tertiary)', cursor: 'pointer', padding: '5px' }}
                         title="Sign Out"
                     >
                         <i className="fas fa-sign-out-alt"></i>

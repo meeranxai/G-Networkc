@@ -99,23 +99,43 @@ const ProfileHeader = ({ user, stats, isOwnProfile, onStatsUpdate, onUserUpdate 
     };
 
     return (
-        <div className="profile-wrapper">
+        <div className="profile-container">
             <div className="profile-cover-section">
-                <img
-                    src={getMediaUrl(userData?.coverPhotoURL) || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop'}
-                    alt="Cover"
-                    className="cover-image"
-                />
-                <div className="cover-overlay"></div>
+                <div className="cover-image-container">
+                    <img
+                        src={getMediaUrl(userData?.coverPhotoURL) || 'https://images.unsplash.com/photo-1614850523296-d8c1af93d400?q=80&w=2070&auto=format&fit=crop'}
+                        alt="Cover"
+                        className="cover-image"
+                    />
+                    <div className="cover-overlay"></div>
+                    
+                    {isOwnProfile && (
+                        <div className="cover-actions">
+                            <button className="btn-cover-action" onClick={() => setIsEditModalOpen(true)} title="Change Cover">
+                                <i className="fas fa-camera"></i>
+                            </button>
+                        </div>
+                    )}
+                </div>
             </div>
 
             <header className="profile-header">
                 <div className="header-avatar-col">
-                    <img
-                        src={getMediaUrl(userData?.photoURL) || '/images/default-avatar.png'}
-                        alt="Profile"
-                        className="profile-avatar-lg"
-                    />
+                    <div className="avatar-container">
+                        <img
+                            src={getMediaUrl(userData?.photoURL) || '/images/default-avatar.png'}
+                            alt="Profile"
+                            className="profile-avatar-lg"
+                        />
+                        <div className={`avatar-status ${userData?.status || 'online'}`}></div>
+                        
+                        {isOwnProfile && (
+                            <div className="avatar-upload-overlay" onClick={() => setIsEditModalOpen(true)}>
+                                <i className="fas fa-camera"></i>
+                                <span>Change</span>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <div className="header-info-col">
@@ -123,7 +143,7 @@ const ProfileHeader = ({ user, stats, isOwnProfile, onStatsUpdate, onUserUpdate 
                         <h2 className="profile-username">
                             {userData?.displayName || 'G-Network User'}
                             {userData?.verification?.isVerified && (
-                                <i className="fas fa-check-circle verification-badge" title="Verified Creator"></i>
+                                <i className="fas fa-check-circle verified-badge" title="Verified Creator"></i>
                             )}
                             {userData?.pronouns && (
                                 <span className="profile-pronouns">{userData.pronouns}</span>
@@ -133,7 +153,9 @@ const ProfileHeader = ({ user, stats, isOwnProfile, onStatsUpdate, onUserUpdate 
                         <div className="profile-actions">
                             {isOwnProfile ? (
                                 <>
-                                    <button className="btn-profile-edit" onClick={() => setIsEditModalOpen(true)}>Edit Profile</button>
+                                    <button className="btn-profile-action btn-profile-edit" onClick={() => setIsEditModalOpen(true)}>
+                                        <i className="fas fa-user-edit"></i> Edit Profile
+                                    </button>
                                     <button className="btn-settings" onClick={() => navigate('/settings')}>
                                         <i className="fas fa-cog"></i>
                                     </button>
@@ -141,48 +163,47 @@ const ProfileHeader = ({ user, stats, isOwnProfile, onStatsUpdate, onUserUpdate 
                             ) : (
                                 <div style={{ display: 'flex', gap: '8px' }}>
                                     <button
-                                        className={`btn-follow-toggle ${followStatus !== 'none' ? 'following' : ''}`}
+                                        className={`btn-profile-action btn-follow-toggle ${followStatus !== 'none' ? 'following' : ''}`}
                                         onClick={handleFollowToggle}
                                         disabled={loading}
                                     >
-                                        {getFollowButtonText()}
+                                        <i className={`fas fa-${followStatus === 'following' ? 'user-check' : 'user-plus'}`}></i> {getFollowButtonText()}
                                     </button>
                                     <button
-                                        className="btn-profile-secondary"
+                                        className="btn-profile-action btn-profile-edit"
                                         onClick={() => navigate(`/chat?uid=${user.firebaseUid || user.uid}`)}
-                                        style={{ padding: '10px 20px', borderRadius: '12px', border: '1px solid var(--border-color)', fontWeight: 700, background: 'var(--surface-100)', cursor: 'pointer' }}
                                     >
-                                        Message
+                                        <i className="fas fa-envelope"></i> Message
                                     </button>
                                 </div>
                             )}
                         </div>
                     </div>
 
-                    <ul className="profile-stats-row">
-                        <li className="stat-item clickable" onClick={() => document.getElementById('user-posts-grid')?.scrollIntoView({ behavior: 'smooth' })} style={{ cursor: 'pointer' }}><strong>{localStats?.postsCount || 0}</strong> posts</li>
-                        <li className="stat-item clickable" onClick={() => openListModal('followers')} style={{ cursor: 'pointer' }}><strong>{localStats?.followersCount || 0}</strong> followers</li>
-                        <li className="stat-item clickable" onClick={() => openListModal('following')} style={{ cursor: 'pointer' }}><strong>{localStats?.followingCount || 0}</strong> following</li>
-                    </ul>
+                    <div className="profile-stats-container">
+                        <ul className="profile-stats-row">
+                            <li className="stat-item" onClick={() => document.getElementById('user-posts-grid')?.scrollIntoView({ behavior: 'smooth' })}>
+                                <i className="fas fa-th"></i>
+                                <strong>{localStats?.postsCount || 0}</strong>
+                                <span>posts</span>
+                            </li>
+                            <li className="stat-item" onClick={() => openListModal('followers')}>
+                                <i className="fas fa-users"></i>
+                                <strong>{localStats?.followersCount || 0}</strong>
+                                <span>followers</span>
+                            </li>
+                            <li className="stat-item" onClick={() => openListModal('following')}>
+                                <i className="fas fa-user-friends"></i>
+                                <strong>{localStats?.followingCount || 0}</strong>
+                                <span>following</span>
+                            </li>
+                        </ul>
+                    </div>
 
-                    <div className="profile-bio">
-                        <p>{userData?.bio || 'No bio yet.'}</p>
-
-                        <div className="profile-meta-extra">
-                            {userData?.techStack && userData.techStack.length > 0 && (
-                                <div className="tech-stack-tags">
-                                    {userData.techStack.map((tech, index) => (
-                                        <span key={index} className="tech-tag">
-                                            <i className="fas fa-code"></i> {tech}
-                                        </span>
-                                    ))}
-                                </div>
-                            )}
-                            
-                            <div className="member-since">
-                                <i className="far fa-calendar-alt"></i>
-                                <span>Joined {new Date(userData?.createdAt || Date.now()).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</span>
-                            </div>
+                    <div className="profile-bio-container">
+                        <span className="bio-name">{userData?.displayName}</span>
+                        <div className="profile-bio">
+                            <p>{userData?.bio || 'No bio yet.'}</p>
                         </div>
 
                         <div className="profile-meta-info">
@@ -194,11 +215,33 @@ const ProfileHeader = ({ user, stats, isOwnProfile, onStatsUpdate, onUserUpdate 
                             )}
                             {userData?.website && (
                                 <a href={userData.website.startsWith('http') ? userData.website : `https://${userData.website}`}
-                                    target="_blank" rel="noopener noreferrer" className="meta-item bio-link" style={{ marginTop: 0 }}>
+                                    target="_blank" rel="noopener noreferrer" className="bio-link">
                                     <i className="fas fa-link"></i>
                                     <span>{userData.website.replace(/^https?:\/\//, '')}</span>
                                 </a>
                             )}
+                        </div>
+
+                        <div className="profile-meta-extra">
+                            {userData?.techStack && userData.techStack.length > 0 && (
+                                <>
+                                    <div className="section-label">
+                                        <i className="fas fa-laptop-code"></i> Tech Stack
+                                    </div>
+                                    <div className="tech-stack-tags">
+                                        {userData.techStack.map((tech, index) => (
+                                            <span key={index} className="tech-tag">
+                                                <i className="fas fa-code"></i> {tech}
+                                            </span>
+                                        ))}
+                                    </div>
+                                </>
+                            )}
+                            
+                            <div className="member-since">
+                                <i className="far fa-calendar-alt"></i>
+                                <span>Joined {new Date(userData?.createdAt || Date.now()).toLocaleDateString(undefined, { month: 'long', year: 'numeric' })}</span>
+                            </div>
                         </div>
                     </div>
                 </div>

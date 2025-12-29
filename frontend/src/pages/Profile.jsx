@@ -83,18 +83,24 @@ const Profile = () => {
         }
     }, [displayedPosts, setFeedContext]);
 
-    if (loading) return <div style={{ padding: '40px', textAlign: 'center' }}>Loading Profile...</div>;
+    if (loading) return (
+        <div className="profile-loading-overlay">
+            <div className="loading-spinner"></div>
+            <div className="loading-text">Loading Profile...</div>
+        </div>
+    );
 
     if (!profileUser) {
         return (
-            <div style={{ padding: '100px 20px', textAlign: 'center' }}>
+            <div className="profile-not-found" style={{ padding: '100px 20px', textAlign: 'center' }}>
                 <h2 style={{ color: 'var(--text-primary)', marginBottom: '15px' }}>User not found</h2>
                 <p style={{ color: 'var(--text-secondary)', marginBottom: '25px' }}>The user you are looking for doesn't exist or has been removed.</p>
                 <button 
                     onClick={() => window.location.href = '/'}
+                    className="return-home-btn"
                     style={{
                         padding: '10px 20px',
-                        background: 'var(--primary-color)',
+                        background: 'var(--primary)',
                         color: 'white',
                         border: 'none',
                         borderRadius: '8px',
