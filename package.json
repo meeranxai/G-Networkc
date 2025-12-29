@@ -4,10 +4,10 @@
   "description": "G-Network - Social Media Platform",
   "private": true,
   "scripts": {
-    "build": "cd frontend && npm ci && npm run build",
+    "build": "npm install --prefix frontend && npm run build --prefix frontend",
     "dev": "cd frontend && npm run dev",
     "start": "cd frontend && npm run preview",
-    "vercel-build": "cd frontend && npm ci && npm run build"
+    "vercel-build": "npm install --prefix frontend && npm run build --prefix frontend"
   },
   "keywords": ["social", "media", "platform"],
   "author": "",
