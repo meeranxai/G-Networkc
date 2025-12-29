@@ -28,26 +28,32 @@ export const SocketProvider = ({ children }) => {
     const [connectionStatus, setConnectionStatus] = useState('disconnected');
     
     // Memory leak prevention
+    const socketRef = useRef(null);
     const cleanupRef = useRef(null);
     const reconnectTimeoutRef = useRef(null);
     const heartbeatIntervalRef = useRef(null);
     const connectionAttempts = useRef(0);
 
     // Cleanup function to prevent memory leaks
-    const cleanup = useCallback(() => {
+    const disconnectSocket = useCallback(() => {
         if (cleanupRef.current) {
             clearTimeout(cleanupRef.current);
+            cleanupRef.current = null;
         }
         if (reconnectTimeoutRef.current) {
             clearTimeout(reconnectTimeoutRef.current);
+            reconnectTimeoutRef.current = null;
         }
         if (heartbeatIntervalRef.current) {
             clearInterval(heartbeatIntervalRef.current);
+            heartbeatIntervalRef.current = null;
         }
         
-        if (socket) {
-            socket.removeAllListeners();
-            socket.disconnect();
+        if (socketRef.current) {
+            console.log('🔌 Disconnecting socket...');
+            socketRef.current.removeAllListeners();
+            socketRef.current.disconnect();
+            socketRef.current = null;
         }
         
         setSocket(null);
@@ -55,11 +61,11 @@ export const SocketProvider = ({ children }) => {
         setConnectionStatus('disconnected');
         setOnlineUsers({});
         connectionAttempts.current = 0;
-    }, [socket]);
+    }, []);
 
     useEffect(() => {
         if (!currentUser) {
-            cleanup();
+            disconnectSocket();
             return;
         }
 
@@ -73,7 +79,6 @@ export const SocketProvider = ({ children }) => {
             reconnectionAttempts: 5,
             reconnectionDelay: 1000,
             reconnectionDelayMax: 5000,
-            maxReconnectionAttempts: 5,
             timeout: 20000, // Increased timeout
             forceNew: false, // Allow connection reuse for better performance
             autoConnect: true,
@@ -81,6 +86,9 @@ export const SocketProvider = ({ children }) => {
             rememberUpgrade: false,
             rejectUnauthorized: false
         });
+
+        socketRef.current = newSocket;
+        setSocket(newSocket);
 
         // Connection event handlers
         newSocket.on('connect', () => {
@@ -115,7 +123,7 @@ export const SocketProvider = ({ children }) => {
         });
 
         newSocket.on('connect_error', (error) => {
-            console.error('❌ Socket Connection Error:', error);
+            console.error('❌ Socket Connection Error:', error.message);
             setConnectionStatus('error');
             connectionAttempts.current++;
             
@@ -134,14 +142,15 @@ export const SocketProvider = ({ children }) => {
             // Clear heartbeat
             if (heartbeatIntervalRef.current) {
                 clearInterval(heartbeatIntervalRef.current);
+                heartbeatIntervalRef.current = null;
             }
 
             // Handle different disconnect reasons
-            if (reason === 'io server disconnect') {
-                // Server initiated disconnect, reconnect manually
-                console.log('🔄 Server disconnected, attempting manual reconnection');
+            if (reason === 'io server disconnect' || reason === 'transport close' || reason === 'ping timeout') {
+                // For these reasons, we might want to attempt manual reconnection
+                console.log(`🔄 Attempting manual reconnection due to ${reason}`);
                 setTimeout(() => {
-                    if (!newSocket.connected) {
+                    if (newSocket && !newSocket.connected && currentUser) {
                         newSocket.connect();
                     }
                 }, 2000);
@@ -156,20 +165,27 @@ export const SocketProvider = ({ children }) => {
         });
 
         newSocket.on('reconnect_attempt', (attemptNumber) => {
-            console.log('🔄 Socket Reconnection attempt:', attemptNumber);
+            // Only log every 2nd attempt to reduce noise
+            if (attemptNumber % 2 === 0) {
+                console.log(`🔄 Socket Reconnection attempt: ${attemptNumber}`);
+            }
             setConnectionStatus('reconnecting');
         });
 
         newSocket.on('reconnect_failed', () => {
-            console.log('❌ Socket Reconnection failed');
+            console.error('❌ Socket Reconnection failed completely');
             setConnectionStatus('failed');
             
-            // Try one more time with polling transport
-            console.log('🔄 Attempting connection with polling transport');
-            newSocket.io.opts.transports = ['polling'];
-            setTimeout(() => {
-                newSocket.connect();
-            }, 5000);
+            // Try one last time with polling transport if not already attempted
+            if (!newSocket.io.opts.transports.includes('polling')) {
+                console.log('🔄 Attempting final fallback connection with polling transport');
+                newSocket.io.opts.transports = ['polling'];
+                setTimeout(() => {
+                    if (currentUser && !newSocket.connected) {
+                        newSocket.connect();
+                    }
+                }, 5000);
+            }
         });
 
         // Handle user presence updates with memory optimization
@@ -177,9 +193,9 @@ export const SocketProvider = ({ children }) => {
             setOnlineUsers(prev => {
                 // Limit online users to prevent memory bloat
                 let updatedUsers = { ...prev };
-                if (Object.keys(updatedUsers).length > 100) {
+                const entries = Object.entries(updatedUsers);
+                if (entries.length > 100) {
                     // Keep only last 50 users
-                    const entries = Object.entries(updatedUsers);
                     const limited = Object.fromEntries(entries.slice(-50));
                     updatedUsers = limited;
                 }
@@ -200,7 +216,7 @@ export const SocketProvider = ({ children }) => {
             console.log('📋 Online users list received:', users.length, 'users');
             const usersMap = {};
             // Limit to first 50 users to prevent memory issues
-            const limitedUsers = users.slice(0, 50);
+            const limitedUsers = Array.isArray(users) ? users.slice(0, 50) : [];
             limitedUsers.forEach(user => {
                 usersMap[user.firebaseUid] = {
                     isOnline: user.isOnline,
@@ -218,16 +234,21 @@ export const SocketProvider = ({ children }) => {
             // Connection is alive - no action needed
         });
 
-        setSocket(newSocket);
-
-        // Cleanup timeout - increased to 10 minutes
-        cleanupRef.current = setTimeout(() => {
-            console.log('🧹 Socket cleanup timeout triggered');
-            cleanup();
-        }, 600000); // 10 minutes
-
-        return cleanup;
-    }, [currentUser, cleanup]);
+        // Cleanup function for the effect
+        return () => {
+            console.log('🧹 Cleaning up socket effect');
+            if (heartbeatIntervalRef.current) {
+                clearInterval(heartbeatIntervalRef.current);
+                heartbeatIntervalRef.current = null;
+            }
+            newSocket.removeAllListeners();
+            newSocket.disconnect();
+            socketRef.current = null;
+            setSocket(null);
+            setIsConnected(false);
+            setConnectionStatus('disconnected');
+        };
+    }, [currentUser?.uid]); // Only depend on UID to avoid re-running on user object changes
 
     // Update user activity status via socket with throttling
     const lastActivityUpdate = useRef(0);

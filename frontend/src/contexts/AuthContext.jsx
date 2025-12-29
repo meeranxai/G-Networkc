@@ -288,12 +288,17 @@ export function AuthProvider({ children }) {
         userActivity
     };
 
-    console.log("🔑 AuthContext value:", { 
-        currentUser: !!currentUser, 
-        loading, 
-        isActive: userActivity.isActive,
-        lastActivity: userActivity.lastActivity 
-    });
+    // Only log state changes in development and when they are meaningful
+    useEffect(() => {
+        const isDevelopment = import.meta.env.MODE === 'development';
+        if (isDevelopment) {
+            console.log("🔑 Auth State Updated:", { 
+                currentUser: !!currentUser, 
+                loading, 
+                isActive: userActivity.isActive
+            });
+        }
+    }, [currentUser, loading, userActivity.isActive]);
 
     return (
         <AuthContext.Provider value={value}>

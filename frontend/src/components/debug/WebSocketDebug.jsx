@@ -24,16 +24,35 @@ const WebSocketDebug = () => {
     useEffect(() => {
         const addLog = (message, type = 'info') => {
             const timestamp = new Date().toLocaleTimeString();
-            setConnectionLogs(prev => [...prev.slice(-9), { timestamp, message, type }]);
+            setConnectionLogs(prev => {
+                const newLogs = [...prev, { timestamp, message, type }];
+                return newLogs.slice(-10); // Keep only last 10 logs
+            });
         };
 
         if (socket) {
-            socket.on('connect', () => addLog('✅ Connected', 'success'));
-            socket.on('disconnect', (reason) => addLog(`❌ Disconnected: ${reason}`, 'error'));
-            socket.on('connect_error', (error) => addLog(`🚫 Connection Error: ${error.message}`, 'error'));
-            socket.on('reconnect', (attempt) => addLog(`🔄 Reconnected (attempt ${attempt})`, 'success'));
-            socket.on('reconnect_attempt', (attempt) => addLog(`🔄 Reconnecting... (${attempt})`, 'warning'));
-            socket.on('reconnect_failed', () => addLog('❌ Reconnection failed', 'error'));
+            const onConnect = () => addLog('✅ Connected', 'success');
+            const onDisconnect = (reason) => addLog(`❌ Disconnected: ${reason}`, 'error');
+            const onConnectError = (error) => addLog(`🚫 Connection Error: ${error.message}`, 'error');
+            const onReconnect = (attempt) => addLog(`🔄 Reconnected (attempt ${attempt})`, 'success');
+            const onReconnectAttempt = (attempt) => addLog(`🔄 Reconnecting... (${attempt})`, 'warning');
+            const onReconnectFailed = () => addLog('❌ Reconnection failed', 'error');
+
+            socket.on('connect', onConnect);
+            socket.on('disconnect', onDisconnect);
+            socket.on('connect_error', onConnectError);
+            socket.on('reconnect', onReconnect);
+            socket.on('reconnect_attempt', onReconnectAttempt);
+            socket.on('reconnect_failed', onReconnectFailed);
+
+            return () => {
+                socket.off('connect', onConnect);
+                socket.off('disconnect', onDisconnect);
+                socket.off('connect_error', onConnectError);
+                socket.off('reconnect', onReconnect);
+                socket.off('reconnect_attempt', onReconnectAttempt);
+                socket.off('reconnect_failed', onReconnectFailed);
+            };
         }
     }, [socket]);
 
