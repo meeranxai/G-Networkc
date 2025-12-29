@@ -170,7 +170,7 @@ const Explore = () => {
     return (
         <main className="feed-container">
             {/* Search Header */}
-            <div className="card glass-panel" style={{ marginBottom: 'var(--space-6)', padding: 'var(--space-6)', borderRadius: 'var(--radius-xl)', background: 'var(--surface-glass)', backdropFilter: 'blur(10px)', border: '1px solid var(--border-light)' }}>
+            <div className="card glass-panel" style={{ marginBottom: 'var(--space-6)', padding: 'var(--space-6)', borderRadius: 'var(--radius-xl)', background: 'var(--background-elevated)', backdropFilter: 'blur(10px)', border: '1px solid var(--border-light)' }}>
                 <form onSubmit={handleSearchSubmit} style={{ position: 'relative', width: '100%', maxWidth: '600px', margin: '0 auto' }}>
                     <i className="fas fa-search" style={{ position: 'absolute', left: '20px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-tertiary)', zIndex: 10 }}></i>
                     <input
@@ -181,14 +181,14 @@ const Explore = () => {
                         onChange={(e) => setSearchTerm(e.target.value)}
                         onFocus={() => setShowHistory(true)}
                         onBlur={() => setTimeout(() => setShowHistory(false), 200)}
-                        style={{ width: '100%', borderRadius: '50px', background: 'var(--bg-secondary)', border: 'none', padding: '16px 20px 16px 50px', fontSize: '16px', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)' }}
+                        style={{ width: '100%', borderRadius: '50px', background: 'var(--background-secondary)', border: '1px solid var(--border-default)', padding: '16px 20px 16px 50px', fontSize: '16px', boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.05)', color: 'var(--text-primary)' }}
                     />
 
                     {/* Search History Dropdown */}
                     {showHistory && recentSearches.length > 0 && (
                         <div className="search-history-dropdown" style={{
                             position: 'absolute', top: '100%', left: 0, right: 0,
-                            background: 'var(--surface-card)', borderRadius: '16px',
+                            background: 'var(--background-elevated)', borderRadius: '16px',
                             marginTop: '8px', padding: '10px 0', border: '1px solid var(--border-light)',
                             boxShadow: 'var(--shadow-lg)', zIndex: 100
                         }}>
@@ -198,10 +198,10 @@ const Explore = () => {
                             </div>
                             {recentSearches.map((term, i) => (
                                 <div key={i} onClick={() => { setSearchTerm(term); setSearchParams({ q: term }); }}
-                                    style={{ padding: '10px 20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px' }}
+                                    style={{ padding: '10px 20px', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '12px', color: 'var(--text-primary)' }}
                                     className="hover-bg-light"
                                 >
-                                    <i className="fas fa-history" style={{ color: 'var(--text-light)' }}></i>
+                                    <i className="fas fa-history" style={{ color: 'var(--text-tertiary)' }}></i>
                                     <span>{term}</span>
                                 </div>
                             ))}
@@ -237,7 +237,7 @@ const Explore = () => {
                                 <button
                                     key={item.tag}
                                     onClick={() => { setSearchTerm(`#${item.tag}`); setSearchParams({ q: `#${item.tag}` }); }}
-                                    style={{ background: 'var(--surface-50)', color: 'var(--text-primary)', border: '1px solid var(--border-light)', padding: '8px 20px', borderRadius: '50px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s ease', boxShadow: 'var(--shadow-sm)' }}
+                                    style={{ background: 'var(--background-secondary)', color: 'var(--text-primary)', border: '1px solid var(--border-light)', padding: '8px 20px', borderRadius: '50px', fontSize: '13px', fontWeight: '600', cursor: 'pointer', whiteSpace: 'nowrap', transition: 'all 0.2s ease', boxShadow: 'var(--shadow-sm)' }}
                                     className="hover:scale-105"
                                 >
                                     #{item.tag}

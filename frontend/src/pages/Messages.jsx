@@ -74,7 +74,7 @@ const Messages = () => {
 
     const fetchChatHistory = async () => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat/history/${currentUser.uid}`);
+            const response = await fetch(`${API_BASE_URL}/api/chat/history/${currentUser.uid}`);
 
             // Handle rate limiting and errors
             if (!response.ok) {
@@ -97,7 +97,7 @@ const Messages = () => {
 
     const fetchMessages = async (chatId) => {
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat/${chatId}/messages`);
+            const response = await fetch(`${API_BASE_URL}/api/chat/${chatId}/messages`);
 
             // Handle rate limiting and errors
             if (!response.ok) {
@@ -115,7 +115,7 @@ const Messages = () => {
 
             // Mark as read (ignore if rate limited)
             try {
-                await fetch(`${import.meta.env.VITE_API_URL}/api/chat/${chatId}/read`, {
+                await fetch(`${API_BASE_URL}/api/chat/${chatId}/read`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ userId: currentUser.uid })
@@ -204,7 +204,7 @@ const Messages = () => {
         formData.append('file', file);
 
         try {
-            const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat/upload-media`, {
+            const response = await fetch(`${API_BASE_URL}/api/chat/upload-media`, {
                 method: 'POST',
                 body: formData
             });
@@ -238,7 +238,7 @@ const Messages = () => {
                     formData.append('file', audioBlob, 'voice-message.webm');
 
                     try {
-                        const response = await fetch(`${import.meta.env.VITE_API_URL}/api/chat/upload-media`, {
+                        const response = await fetch(`${API_BASE_URL}/api/chat/upload-media`, {
                             method: 'POST',
                             body: formData
                         });
@@ -271,7 +271,7 @@ const Messages = () => {
 
     const handleReaction = async (messageId, emoji) => {
         try {
-            await fetch(`${import.meta.env.VITE_API_URL}/api/chat/message/${messageId}/react`, {
+            await fetch(`${API_BASE_URL}/api/chat/message/${messageId}/react`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ emoji, userId: currentUser.uid })
@@ -283,7 +283,7 @@ const Messages = () => {
 
     const handleDeleteMessage = async (messageId) => {
         try {
-            await fetch(`${import.meta.env.VITE_API_URL}/api/chat/message/${messageId}`, {
+            await fetch(`${API_BASE_URL}/api/chat/message/${messageId}`, {
                 method: 'DELETE',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ userId: currentUser.uid })
@@ -299,7 +299,7 @@ const Messages = () => {
         setIsSearching(true);
         try {
             const response = await fetch(
-                `${import.meta.env.VITE_API_URL}/api/chat/${selectedChat._id}/search?q=${encodeURIComponent(query)}`
+                `${API_BASE_URL}/api/chat/${selectedChat._id}/search?q=${encodeURIComponent(query)}`
             );
             const data = await response.json();
             setSearchResults(data);

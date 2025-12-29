@@ -79,9 +79,9 @@ const Settings = () => {
 
     return (
         <main className="feed-container" style={{ maxWidth: '800px', padding: '40px 20px', margin: '0 auto' }}>
-            <div className="card" style={{ padding: '30px', borderRadius: '24px', background: 'rgba(255, 255, 255, 0.7)', backdropFilter: 'blur(20px)', border: '1px solid rgba(255, 255, 255, 0.3)' }}>
-                <div style={{ marginBottom: '30px', borderBottom: '1px solid var(--border-color)', paddingBottom: '15px' }}>
-                    <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 800 }}>Settings</h1>
+            <div className="card" style={{ padding: '30px', borderRadius: '24px', background: 'var(--background-elevated)', backdropFilter: 'blur(20px)', border: '1px solid var(--border-light)' }}>
+                <div style={{ marginBottom: '30px', borderBottom: '1px solid var(--border-light)', paddingBottom: '15px' }}>
+                    <h1 style={{ margin: 0, fontSize: '24px', fontWeight: 800, color: 'var(--text-primary)' }}>Settings</h1>
                     <p style={{ color: 'var(--text-tertiary)', margin: '5px 0 0' }}>Manage your account privacy and experience</p>
                 </div>
 
@@ -105,7 +105,7 @@ const Settings = () => {
                         <div className="toggle-text">
                             <strong>Who can see my bio?</strong>
                         </div>
-                        <select value={privacy.about} onChange={(e) => handleSelect('about', e.target.value)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                        <select value={privacy.about} onChange={(e) => handleSelect('about', e.target.value)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--border-default)', background: 'var(--background-elevated)', color: 'var(--text-primary)' }}>
                             <option value="everyone">Everyone</option>
                             <option value="contacts">Followers Only</option>
                             <option value="nobody">Nobody</option>
@@ -116,7 +116,7 @@ const Settings = () => {
                         <div className="toggle-text">
                             <strong>Profile Photo Visibility</strong>
                         </div>
-                        <select value={privacy.profilePhoto} onChange={(e) => handleSelect('profilePhoto', e.target.value)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                        <select value={privacy.profilePhoto} onChange={(e) => handleSelect('profilePhoto', e.target.value)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--border-default)', background: 'var(--background-elevated)', color: 'var(--text-primary)' }}>
                             <option value="everyone">Everyone</option>
                             <option value="contacts">Followers Only</option>
                             <option value="nobody">Nobody</option>
@@ -144,7 +144,7 @@ const Settings = () => {
                         <div className="toggle-text">
                             <strong>Who can message me?</strong>
                         </div>
-                        <select value={privacy.whoCanMessage} onChange={(e) => handleSelect('whoCanMessage', e.target.value)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--border-color)' }}>
+                        <select value={privacy.whoCanMessage} onChange={(e) => handleSelect('whoCanMessage', e.target.value)} style={{ padding: '8px', borderRadius: '8px', border: '1px solid var(--border-default)', background: 'var(--background-elevated)', color: 'var(--text-primary)' }}>
                             <option value="everyone">Everyone</option>
                             <option value="followers">Followers Only</option>
                             <option value="nobody">Nobody</option>
@@ -152,8 +152,8 @@ const Settings = () => {
                     </div>
                 </section>
 
-                {successMsg && <div style={{ background: '#d1fae5', color: '#065f46', padding: '15px', borderRadius: '12px', marginBottom: '20px', fontWeight: 600 }}>{successMsg}</div>}
-                {errorMsg && <div style={{ background: '#fee2e2', color: '#991b1b', padding: '15px', borderRadius: '12px', marginBottom: '20px', fontWeight: 600 }}>{errorMsg}</div>}
+                {successMsg && <div style={{ background: 'var(--success-light)', color: 'var(--success-dark)', padding: '15px', borderRadius: '12px', marginBottom: '20px', fontWeight: 600 }}>{successMsg}</div>}
+                {errorMsg && <div style={{ background: 'var(--error-light)', color: 'var(--error-dark)', padding: '15px', borderRadius: '12px', marginBottom: '20px', fontWeight: 600 }}>{errorMsg}</div>}
 
                 <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '15px' }}>
                     <button className="btn btn-ghost" onClick={() => window.history.back()}>Back</button>
@@ -162,9 +162,9 @@ const Settings = () => {
                     </button>
                 </div>
 
-                <div className="setting-danger-zone" style={{ marginTop: '60px', padding: '20px', background: 'rgba(255, 71, 87, 0.05)', borderRadius: '16px', border: '1px solid rgba(255, 71, 87, 0.2)' }}>
-                    <button className="btn-logout" style={{ background: '#ff4757', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', width: '100%', fontWeight: 700, cursor: 'pointer', marginBottom: '10px' }} onClick={() => { if (window.confirm('Delete account? This cannot be undone.')) alert('Contact support for deletion.'); }}>Delete Account</button>
-                    <p style={{ margin: 0, fontSize: '0.85rem', color: '#ff4757', textAlign: 'center' }}>Permanently delete your account and all data.</p>
+                <div className="setting-danger-zone" style={{ marginTop: '60px', padding: '20px', background: 'var(--error-light)', borderRadius: '16px', border: '1px solid var(--error)' }}>
+                    <button className="btn-logout" style={{ background: 'var(--error)', color: 'white', border: 'none', padding: '12px', borderRadius: '12px', width: '100%', fontWeight: 700, cursor: 'pointer', marginBottom: '10px' }} onClick={() => { if (window.confirm('Delete account? This cannot be undone.')) alert('Contact support for deletion.'); }}>Delete Account</button>
+                    <p style={{ margin: 0, fontSize: '0.85rem', color: 'var(--error)', textAlign: 'center' }}>Permanently delete your account and all data.</p>
                 </div>
             </div>
         </main>
