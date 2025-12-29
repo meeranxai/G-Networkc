@@ -74,24 +74,77 @@ export const getMediaUrl = (path) => {
 };
 
 /**
- * API Health Check Function
+ * API Health Check Function with Railway Wake-up Support
  */
-export const checkAPIHealth = async () => {
-    try {
-        const response = await fetch(`${API_BASE_URL}/api/health`, {
-            method: 'GET',
-            timeout: 5000
-        });
-        
-        if (response.ok) {
-            console.log('✅ API Health Check: OK');
-            return true;
-        } else {
-            console.warn('⚠️ API Health Check: Failed', response.status);
-            return false;
+export const checkAPIHealth = async (retries = 3) => {
+    for (let i = 0; i < retries; i++) {
+        try {
+            console.log(`🔄 API Health Check attempt ${i + 1}/${retries}`);
+            
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), 10000); // 10s timeout for Railway wake-up
+            
+            const response = await fetch(`${API_BASE_URL}/api/health`, {
+                method: 'GET',
+                signal: controller.signal,
+                headers: {
+                    'Cache-Control': 'no-cache',
+                    'Pragma': 'no-cache'
+                }
+            });
+            
+            clearTimeout(timeoutId);
+            
+            if (response.ok) {
+                console.log('✅ API Health Check: OK');
+                return true;
+            } else {
+                console.warn(`⚠️ API Health Check: Failed with status ${response.status}`);
+                if (i < retries - 1) {
+                    console.log('🔄 Retrying in 3 seconds (Railway may be waking up)...');
+                    await new Promise(resolve => setTimeout(resolve, 3000));
+                }
+            }
+        } catch (error) {
+            console.error(`❌ API Health Check attempt ${i + 1}: ${error.message}`);
+            if (i < retries - 1) {
+                console.log('🔄 Retrying in 3 seconds (Railway may be sleeping)...');
+                await new Promise(resolve => setTimeout(resolve, 3000));
+            }
         }
+    }
+    
+    console.error('❌ API Health Check: All attempts failed');
+    return false;
+};
+
+/**
+ * Wake up Railway backend if sleeping
+ */
+export const wakeUpBackend = async () => {
+    console.log('🚀 Attempting to wake up Railway backend...');
+    
+    try {
+        // Multiple wake-up attempts to different endpoints
+        const wakeUpPromises = [
+            fetch(`${API_BASE_URL}/api/health`, { method: 'GET' }),
+            fetch(`${API_BASE_URL}/api/users/ping`, { method: 'GET' }),
+            fetch(`${API_BASE_URL}/`, { method: 'GET' })
+        ];
+        
+        // Wait for any response (don't care about success)
+        await Promise.allSettled(wakeUpPromises);
+        
+        console.log('⏰ Wake-up requests sent, waiting for Railway to respond...');
+        
+        // Wait a bit for Railway to wake up
+        await new Promise(resolve => setTimeout(resolve, 5000));
+        
+        // Now check if it's actually awake
+        return await checkAPIHealth(2);
+        
     } catch (error) {
-        console.error('❌ API Health Check: Error', error.message);
+        console.error('❌ Wake-up failed:', error.message);
         return false;
     }
 };
