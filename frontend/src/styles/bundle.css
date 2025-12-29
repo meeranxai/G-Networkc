@@ -3,24 +3,56 @@
    Consolidated from 17 separate files to reduce HTTP requests
    ================================================================= */
 
-/* Import all CSS files in optimized order */
-@import './style.css';                      /* Core base styles */
-@import './social.css';                     /* Social base features */
-@import './components.css';                 /* General components */
-@import './pages-enhancement.css';          /* Page enhancements */
-@import './profile.css';                    /* Profile page */
-@import './login.css';                      /* Login page */
-@import './messenger.css';                  /* Messenger page */
-@import './settings-complete.css';          /* Settings page */
-@import './settings-enhancements.css';      /* Settings enhancements */
-@import './PostCard.css';                   /* Post cards */
-@import './PostViewer.css';                 /* Post viewer */
-@import './PostMenu.css';                   /* Post menus */
-@import './Toast.css';                      /* Toast notifications */
-@import './call.css';                       /* Video calling */
-@import './whatsapp.css';                   /* WhatsApp features */
-@import './app-integration.css';            /* App integration */
-@import './light-theme-force.css';          /* Theme force (final override) */
+/* Core base styles first */
+@import url('./style.css');
+
+/* Social base features */
+@import url('./social.css');
+
+/* General components */
+@import url('./components.css');
+
+/* Page enhancements */
+@import url('./pages-enhancement.css');
+
+/* Profile page */
+@import url('./profile.css');
+
+/* Login page */
+@import url('./login.css');
+
+/* Messenger page */
+@import url('./messenger.css');
+
+/* Settings page */
+@import url('./settings-complete.css');
+
+/* Settings enhancements */
+@import url('./settings-enhancements.css');
+
+/* Post cards */
+@import url('./PostCard.css');
+
+/* Post viewer */
+@import url('./PostViewer.css');
+
+/* Post menus */
+@import url('./PostMenu.css');
+
+/* Toast notifications */
+@import url('./Toast.css');
+
+/* Video calling */
+@import url('./call.css');
+
+/* WhatsApp features */
+@import url('./whatsapp.css');
+
+/* App integration */
+@import url('./app-integration.css');
+
+/* Theme force (final override) */
+@import url('./light-theme-force.css');
 
 /* =================================================================
    PERFORMANCE OPTIMIZATIONS

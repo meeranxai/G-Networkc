@@ -40,8 +40,11 @@ export default defineConfig({
       overlay: false
     }
   },
-  // CSS optimization
+  // Disable PostCSS processing to avoid CSS parsing errors
   css: {
-    devSourcemap: false
-  }
+    devSourcemap: false,
+    postcss: false
+  },
+  // Ensure proper asset handling
+  assetsInclude: ['**/*.css']
 })

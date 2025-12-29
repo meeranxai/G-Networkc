@@ -9,6 +9,7 @@ import { NotificationProvider } from './contexts/NotificationContext';
 import { SocketProvider } from './contexts/SocketContext';
 import PerformanceMonitor from './components/performance/PerformanceMonitor';
 import WebSocketDebug from './components/debug/WebSocketDebug';
+import CSSDebug from './components/debug/CSSDebug';
 
 // Lazy load components to reduce initial bundle size
 const Home = lazy(() => import('./pages/Home'));
@@ -81,6 +82,7 @@ function App() {
                             <NotificationProvider>
                                 <PerformanceMonitor />
                                 <WebSocketDebug />
+                                <CSSDebug />
                                 <Suspense fallback={<LoadingSpinner />}>
                                     <Routes>
                                         <Route path="/login" element={<Login />} />
