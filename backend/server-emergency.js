@@ -78,33 +78,23 @@ app.get('/api/users/check-username/:username', (req, res) => {
 app.get('/api/posts', (req, res) => {
     res.status(200).json({
         posts: [],
+        totalPosts: 0,
+        hasMore: false,
         message: 'Emergency mode - Set MONGO_URI environment variable to enable database',
         mode: 'emergency'
     });
 });
 
 app.get('/api/stories', (req, res) => {
-    res.status(200).json({
-        stories: [],
-        message: 'Emergency mode - Set MONGO_URI environment variable to enable database',
-        mode: 'emergency'
-    });
+    res.status(200).json([]);
 });
 
 app.get('/api/notifications/:userId', (req, res) => {
-    res.status(200).json({
-        notifications: [],
-        message: 'Emergency mode - Set MONGO_URI environment variable to enable database',
-        mode: 'emergency'
-    });
+    res.status(200).json([]);
 });
 
 app.get('/api/chat/unread-counts/:userId', (req, res) => {
-    res.status(200).json({
-        counts: [],
-        message: 'Emergency mode - Set MONGO_URI environment variable to enable database',
-        mode: 'emergency'
-    });
+    res.status(200).json([]);
 });
 
 app.get('/api/autonomous/theme/user/:userId', (req, res) => {
@@ -136,6 +126,54 @@ app.post('/api/users/sync', (req, res) => {
     });
 });
 
+// Additional API endpoints that frontend might call
+app.get('/api/users/:userId', (req, res) => {
+    res.status(200).json({
+        firebaseUid: req.params.userId,
+        displayName: 'Emergency User',
+        email: 'emergency@example.com',
+        photoURL: '',
+        followers: [],
+        following: [],
+        mode: 'emergency'
+    });
+});
+
+app.get('/api/users/stats/:userId', (req, res) => {
+    res.status(200).json({
+        postsCount: 0,
+        followersCount: 0,
+        followingCount: 0,
+        mode: 'emergency'
+    });
+});
+
+app.get('/api/posts/saved', (req, res) => {
+    res.status(200).json({
+        posts: [],
+        mode: 'emergency'
+    });
+});
+
+app.get('/api/posts/trending-hashtags', (req, res) => {
+    res.status(200).json([]);
+});
+
+app.get('/api/users/search/all', (req, res) => {
+    res.status(200).json([]);
+});
+
+app.get('/api/chat/history/:userId', (req, res) => {
+    res.status(200).json([]);
+});
+
+app.get('/api/notifications/unread-count/:userId', (req, res) => {
+    res.status(200).json({
+        count: 0,
+        mode: 'emergency'
+    });
+});
+
 // Catch all API routes
 app.all('/api/*', (req, res) => {
     res.status(200).json({
@@ -154,6 +192,46 @@ io.on('connection', (socket) => {
     socket.emit('emergency_mode', {
         message: 'Connected in emergency mode - Limited functionality',
         mode: 'emergency'
+    });
+    
+    // Handle common socket events to prevent errors
+    socket.on('user_online', (userData) => {
+        console.log('User online (emergency mode):', userData?.firebaseUid);
+        socket.emit('user_presence_changed', {
+            firebaseUid: userData?.firebaseUid,
+            isOnline: true,
+            mode: 'emergency'
+        });
+    });
+    
+    socket.on('join_personal_room', (uid) => {
+        socket.join(uid);
+        console.log(`User ${uid} joined personal room (emergency mode)`);
+    });
+    
+    socket.on('join_chat', (chatId) => {
+        socket.join(chatId);
+        console.log(`Socket ${socket.id} joined chat room ${chatId} (emergency mode)`);
+    });
+    
+    socket.on('send_message', (data) => {
+        console.log('Message received (emergency mode):', data);
+        socket.emit('error', { 
+            message: 'Emergency mode - Messaging disabled. Set environment variables to enable.',
+            mode: 'emergency'
+        });
+    });
+    
+    socket.on('typing', (data) => {
+        // Ignore typing events in emergency mode
+    });
+    
+    socket.on('mark_messages_read', (data) => {
+        // Ignore read receipts in emergency mode
+    });
+    
+    socket.on('clear_unread_count', (data) => {
+        // Ignore unread count clearing in emergency mode
     });
     
     socket.on('disconnect', () => {
