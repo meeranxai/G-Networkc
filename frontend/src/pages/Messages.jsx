@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
+import { API_BASE_URL, getMediaUrl } from '../api/config';
 import '../styles/messenger.css';
 
 const Messages = () => {
