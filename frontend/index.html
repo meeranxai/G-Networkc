@@ -7,8 +7,28 @@
     <meta name="description" content="G-Network - Social Media Platform" />
     <meta name="theme-color" content="#667eea" />
     
-    <!-- Preload critical CSS for faster rendering -->
-    <link rel="preload" href="/src/styles/bundle.css" as="style" />
+    <!-- Performance optimizations -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="dns-prefetch" href="https://g-networkc-production.up.railway.app">
+    
+    <!-- Critical CSS for initial render -->
+    <style>
+      body { 
+        margin: 0; 
+        font-family: 'Inter', system-ui, -apple-system, sans-serif; 
+        -webkit-font-smoothing: antialiased;
+      }
+      .loading { 
+        display: flex; 
+        justify-content: center; 
+        align-items: center; 
+        height: 100vh; 
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+      }
+      /* Prevent FOUC */
+      #root { min-height: 100vh; }
+    </style>
     
     <!-- Cache control for production -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
@@ -18,7 +38,9 @@
     <title>G-Network</title>
   </head>
   <body>
-    <div id="root"></div>
+    <div id="root">
+      <div class="loading">Loading G-Network...</div>
+    </div>
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
