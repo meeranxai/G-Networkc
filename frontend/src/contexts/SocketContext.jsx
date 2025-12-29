@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState, useCallback } from 'react';
+import React, { createContext, useContext, useEffect, useState, useCallback, useRef } from 'react';
 import { io } from 'socket.io-client';
 import { SOCKET_URL } from '../api/config';
 import { useAuth } from './AuthContext';
@@ -26,17 +26,38 @@ export const SocketProvider = ({ children }) => {
     const [onlineUsers, setOnlineUsers] = useState({});
     const [isConnected, setIsConnected] = useState(false);
     const [connectionStatus, setConnectionStatus] = useState('disconnected');
+    
+    // Memory leak prevention
+    const cleanupRef = useRef(null);
+    const reconnectTimeoutRef = useRef(null);
+    const heartbeatIntervalRef = useRef(null);
+
+    // Cleanup function to prevent memory leaks
+    const cleanup = useCallback(() => {
+        if (cleanupRef.current) {
+            clearTimeout(cleanupRef.current);
+        }
+        if (reconnectTimeoutRef.current) {
+            clearTimeout(reconnectTimeoutRef.current);
+        }
+        if (heartbeatIntervalRef.current) {
+            clearInterval(heartbeatIntervalRef.current);
+        }
+        
+        if (socket) {
+            socket.removeAllListeners();
+            socket.disconnect();
+        }
+        
+        setSocket(null);
+        setIsConnected(false);
+        setConnectionStatus('disconnected');
+        setOnlineUsers({});
+    }, [socket]);
 
     useEffect(() => {
         if (!currentUser) {
-            if (socket) {
-                console.log('🔌 Disconnecting socket - user logged out');
-                socket.disconnect();
-                setSocket(null);
-                setIsConnected(false);
-                setConnectionStatus('disconnected');
-                setOnlineUsers({});
-            }
+            cleanup();
             return;
         }
 
@@ -45,15 +66,26 @@ export const SocketProvider = ({ children }) => {
 
         const newSocket = io(SOCKET_URL, {
             transports: ['websocket'],
-            reconnectionAttempts: 5,
-            reconnectionDelay: 1000,
-            timeout: 10000
+            reconnectionAttempts: 3, // Reduced from 5
+            reconnectionDelay: 2000, // Increased delay
+            timeout: 8000, // Reduced timeout
+            forceNew: true // Prevent connection reuse
         });
+
+        // Heartbeat to prevent connection hanging
+        const startHeartbeat = () => {
+            heartbeatIntervalRef.current = setInterval(() => {
+                if (newSocket.connected) {
+                    newSocket.emit('ping');
+                }
+            }, 30000); // Every 30 seconds
+        };
 
         newSocket.on('connect', () => {
             console.log('✅ Socket Connected:', newSocket.id);
             setIsConnected(true);
             setConnectionStatus('connected');
+            startHeartbeat();
             
             // Announce presence with full user data
             newSocket.emit('user_online', {
@@ -74,12 +106,18 @@ export const SocketProvider = ({ children }) => {
             console.log('🔌 Socket Disconnected:', reason);
             setIsConnected(false);
             setConnectionStatus('disconnected');
+            
+            // Clear heartbeat
+            if (heartbeatIntervalRef.current) {
+                clearInterval(heartbeatIntervalRef.current);
+            }
         });
 
         newSocket.on('reconnect', (attemptNumber) => {
             console.log('🔄 Socket Reconnected after', attemptNumber, 'attempts');
             setIsConnected(true);
             setConnectionStatus('connected');
+            startHeartbeat();
         });
 
         newSocket.on('reconnect_attempt', (attemptNumber) => {
@@ -90,28 +128,39 @@ export const SocketProvider = ({ children }) => {
         newSocket.on('reconnect_failed', () => {
             console.log('❌ Socket Reconnection failed');
             setConnectionStatus('failed');
+            cleanup(); // Clean up on failure
         });
 
-        // Handle user presence updates
+        // Handle user presence updates with memory optimization
         newSocket.on('user_presence_changed', (data) => {
-            console.log('👤 User presence changed:', data);
-            setOnlineUsers(prev => ({
-                ...prev,
-                [data.firebaseUid]: {
+            setOnlineUsers(prev => {
+                // Limit online users to prevent memory bloat
+                const newUsers = { ...prev };
+                if (Object.keys(newUsers).length > 100) {
+                    // Keep only last 50 users
+                    const entries = Object.entries(newUsers);
+                    const limited = Object.fromEntries(entries.slice(-50));
+                    newUsers = limited;
+                }
+                
+                newUsers[data.firebaseUid] = {
                     isOnline: data.isOnline,
                     isActive: data.isActive,
                     lastSeen: data.lastSeen,
                     displayName: data.displayName,
                     photoURL: data.photoURL
-                }
-            }));
+                };
+                return newUsers;
+            });
         });
 
-        // Handle online users list
+        // Handle online users list with memory limits
         newSocket.on('online_users_list', (users) => {
             console.log('📋 Online users list received:', users.length, 'users');
             const usersMap = {};
-            users.forEach(user => {
+            // Limit to first 50 users to prevent memory issues
+            const limitedUsers = users.slice(0, 50);
+            limitedUsers.forEach(user => {
                 usersMap[user.firebaseUid] = {
                     isOnline: user.isOnline,
                     isActive: user.isActive,
@@ -129,22 +178,36 @@ export const SocketProvider = ({ children }) => {
             setConnectionStatus('error');
         });
 
+        // Pong response for heartbeat
+        newSocket.on('pong', () => {
+            // Connection is alive
+        });
+
         setSocket(newSocket);
 
-        return () => {
-            console.log('🔌 Cleaning up socket connection');
-            newSocket.disconnect();
-        };
-    }, [currentUser]);
+        // Cleanup timeout
+        cleanupRef.current = setTimeout(() => {
+            console.log('🧹 Socket cleanup timeout triggered');
+            cleanup();
+        }, 300000); // 5 minutes max connection
 
-    // Update user activity status via socket
+        return cleanup;
+    }, [currentUser, cleanup]);
+
+    // Update user activity status via socket with throttling
+    const lastActivityUpdate = useRef(0);
     useEffect(() => {
         if (socket && currentUser && userActivity) {
-            socket.emit('user_activity_update', {
-                firebaseUid: currentUser.uid,
-                isActive: userActivity.isActive,
-                lastActivity: userActivity.lastActivity
-            });
+            const now = Date.now();
+            // Throttle activity updates to every 5 seconds
+            if (now - lastActivityUpdate.current > 5000) {
+                socket.emit('user_activity_update', {
+                    firebaseUid: currentUser.uid,
+                    isActive: userActivity.isActive,
+                    lastActivity: userActivity.lastActivity
+                });
+                lastActivityUpdate.current = now;
+            }
         }
     }, [socket, currentUser, userActivity?.isActive, userActivity?.lastActivity]);
 

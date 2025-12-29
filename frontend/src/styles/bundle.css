@@ -1,0 +1,55 @@
+/* =================================================================
+   G-NETWORK OPTIMIZED CSS BUNDLE
+   Consolidated from 17 separate files to reduce HTTP requests
+   ================================================================= */
+
+/* Import all CSS files in optimized order */
+@import './style.css';                      /* Core base styles */
+@import './social.css';                     /* Social base features */
+@import './components.css';                 /* General components */
+@import './pages-enhancement.css';          /* Page enhancements */
+@import './profile.css';                    /* Profile page */
+@import './login.css';                      /* Login page */
+@import './messenger.css';                  /* Messenger page */
+@import './settings-complete.css';          /* Settings page */
+@import './settings-enhancements.css';      /* Settings enhancements */
+@import './PostCard.css';                   /* Post cards */
+@import './PostViewer.css';                 /* Post viewer */
+@import './PostMenu.css';                   /* Post menus */
+@import './Toast.css';                      /* Toast notifications */
+@import './call.css';                       /* Video calling */
+@import './whatsapp.css';                   /* WhatsApp features */
+@import './app-integration.css';            /* App integration */
+@import './light-theme-force.css';          /* Theme force (final override) */
+
+/* =================================================================
+   PERFORMANCE OPTIMIZATIONS
+   ================================================================= */
+
+/* Reduce repaints and reflows */
+* {
+    box-sizing: border-box;
+}
+
+/* GPU acceleration for animations */
+.animated-element {
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* Optimize images */
+img {
+    image-rendering: optimizeQuality;
+    image-rendering: -webkit-optimize-contrast;
+}
+
+/* Reduce layout thrashing */
+.container {
+    contain: layout style paint;
+}
+
+/* Memory-efficient scrolling */
+.scroll-container {
+    overflow-anchor: auto;
+    scroll-behavior: smooth;
+}
