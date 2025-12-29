@@ -15,9 +15,15 @@ import '../../styles/PostCard.css';
 const PostCard = ({ post, onUpdate, feedType = 'home' }) => {
     const { currentUser } = useAuth();
     const { openPostViewer } = useGNavigation();
-    const [isLiked, setIsLiked] = useState(post.likes && currentUser ? post.likes.includes(currentUser.uid) : false);
-    const [likesCount, setLikesCount] = useState(post.likes?.length || 0);
-    const [isSaved, setIsSaved] = useState(post.saves && currentUser ? post.saves.includes(currentUser.uid) : false);
+    
+    // Safe data handling with fallbacks
+    const safePost = post || {};
+    const safeLikes = Array.isArray(safePost.likes) ? safePost.likes : [];
+    const safeSaves = Array.isArray(safePost.saves) ? safePost.saves : [];
+    
+    const [isLiked, setIsLiked] = useState(currentUser ? safeLikes.includes(currentUser.uid) : false);
+    const [likesCount, setLikesCount] = useState(safeLikes.length);
+    const [isSaved, setIsSaved] = useState(currentUser ? safeSaves.includes(currentUser.uid) : false);
     const [loading, setLoading] = useState(false);
     const [showComments, setShowComments] = useState(false);
     const [commentText, setCommentText] = useState('');
@@ -27,7 +33,7 @@ const PostCard = ({ post, onUpdate, feedType = 'home' }) => {
     const [isReportModalOpen, setIsReportModalOpen] = useState(false);
     const [showShareModal, setShowShareModal] = useState(false);
     const [showCollectionModal, setShowCollectionModal] = useState(false);
-    const [postData, setPostData] = useState(post);
+    const [postData, setPostData] = useState(safePost);
     const [showHeartAnim, setShowHeartAnim] = useState(false);
     const [showPulseAnim, setShowPulseAnim] = useState(false);
     const [showTags, setShowTags] = useState(false);
@@ -38,15 +44,19 @@ const PostCard = ({ post, onUpdate, feedType = 'home' }) => {
         // Track impression (FR-SHARE-004 logic)
         const trackImpression = async () => {
             try {
-                await fetch(`${API_BASE_URL}/api/posts/${post._id}/view`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ type: 'impression', userId: currentUser?.uid })
-                });
-            } catch (err) { /* ignore */ }
+                if (safePost._id) {
+                    await fetch(`${API_BASE_URL}/api/posts/${safePost._id}/view`, {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ type: 'impression', userId: currentUser?.uid })
+                    });
+                }
+            } catch (err) { 
+                console.warn('Failed to track impression:', err);
+            }
         };
         trackImpression();
-    }, [post._id, currentUser]);
+    }, [safePost._id, currentUser]);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -54,16 +64,24 @@ const PostCard = ({ post, onUpdate, feedType = 'home' }) => {
                 setShowMenu(false);
             }
         };
-        if (showMenu) document.addEventListener('mousedown', handleClickOutside);
-        return () => document.removeEventListener('mousedown', handleClickOutside);
+        if (showMenu) {
+            document.addEventListener('mousedown', handleClickOutside);
+            return () => document.removeEventListener('mousedown', handleClickOutside);
+        }
     }, [showMenu]);
 
     const fetchComments = async () => {
         try {
-            const res = await fetch(`${API_BASE_URL}/api/posts/${post._id}/comments`);
-            const data = await res.json();
-            setComments(data);
-        } catch (err) { console.error(err); }
+            if (!safePost._id) return;
+            const res = await fetch(`${API_BASE_URL}/api/posts/${safePost._id}/comments`);
+            if (res.ok) {
+                const data = await res.json();
+                setComments(Array.isArray(data) ? data : []);
+            }
+        } catch (err) { 
+            console.error('Failed to fetch comments:', err);
+            setComments([]);
+        }
     };
 
     useEffect(() => {
@@ -72,11 +90,15 @@ const PostCard = ({ post, onUpdate, feedType = 'home' }) => {
 
     const handlePostUpdate = (updatedPost) => {
         if (!updatedPost) return;
-        setPostData(updatedPost);
-        setLikesCount(updatedPost.likes?.length || 0);
-        setIsLiked(updatedPost.likes && currentUser ? updatedPost.likes.includes(currentUser.uid) : false);
-        setIsSaved(updatedPost.saves && currentUser ? updatedPost.saves.includes(currentUser.uid) : false);
-        if (onUpdate) onUpdate(updatedPost);
+        const safeUpdatedPost = updatedPost || {};
+        const updatedLikes = Array.isArray(safeUpdatedPost.likes) ? safeUpdatedPost.likes : [];
+        const updatedSaves = Array.isArray(safeUpdatedPost.saves) ? safeUpdatedPost.saves : [];
+        
+        setPostData(safeUpdatedPost);
+        setLikesCount(updatedLikes.length);
+        setIsLiked(currentUser ? updatedLikes.includes(currentUser.uid) : false);
+        setIsSaved(currentUser ? updatedSaves.includes(currentUser.uid) : false);
+        if (onUpdate) onUpdate(safeUpdatedPost);
     };
 
     const handleMediaClick = (e) => {

@@ -43,11 +43,30 @@ const FeedStream = ({ feedType = 'home' }) => {
             const res = await fetch(url);
             const data = await res.json();
 
+            // Handle different response formats from backend
+            let postsArray = [];
+            let hasMorePosts = false;
+
+            if (Array.isArray(data)) {
+                // Backend returns array directly
+                postsArray = data;
+                hasMorePosts = data.length >= 10;
+            } else if (data && data.posts) {
+                // Backend returns object with posts property
+                postsArray = Array.isArray(data.posts) ? data.posts : [];
+                hasMorePosts = data.hasMore || data.posts.length >= 10;
+            } else {
+                // Fallback for unexpected format
+                console.warn('Unexpected posts response format:', data);
+                postsArray = [];
+                hasMorePosts = false;
+            }
+
             setPosts(prev => {
-                return shouldAppend ? [...prev, ...(data.posts || [])] : (data.posts || []);
+                return shouldAppend ? [...prev, ...postsArray] : postsArray;
             });
 
-            setHasMore(data.hasMore);
+            setHasMore(hasMorePosts);
         } catch (err) {
             console.error("Failed to fetch posts", err);
         } finally {

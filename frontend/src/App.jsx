@@ -17,18 +17,26 @@ import { useAuth, AuthProvider } from './contexts/AuthContext';
 import { AutonomousThemeProvider } from './contexts/AutonomousThemeContext';
 import AutonomousTracker from './components/ai/AutonomousTracker';
 import AIChatBot from './components/ai/AIChatBot';
+import FrontendDebug from './components/debug/FrontendDebug';
 
 // Protected Route Wrapper
 const ProtectedRoute = ({ children }) => {
     const { currentUser, loading } = useAuth();
 
     if (loading) {
-        return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--bg-body)' }}>Loading...</div>;
+        return <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh', background: 'var(--background-primary)' }}>Loading...</div>;
     }
 
     if (!currentUser) {
         return <Navigate to="/login" replace />;
     }
+
+    return (
+        <>
+            {children}
+            <FrontendDebug />
+        </>
+    );    }
 
     return children;
 };

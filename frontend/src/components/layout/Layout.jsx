@@ -25,15 +25,17 @@ const Layout = () => {
         // Check backend connection
         const checkConnection = async () => {
             try {
-                const response = await fetch(`${API_BASE_URL}/api/users/check-username/ping-test-123`);
+                const response = await fetch(`${API_BASE_URL}/health`);
                 if (response.ok) {
+                    const data = await response.json();
+                    console.log('✅ Backend connected:', data.status);
                     setServerStatus('online');
                 } else {
-                    console.warn(`Backend Ping failed with status: ${response.status}`);
+                    console.warn(`Backend health check failed with status: ${response.status}`);
                     setServerStatus('offline');
                 }
             } catch (err) {
-                console.error("Backend Connection Failed. Check if server is running on port 5000:", err);
+                console.error("Backend Connection Failed:", err);
                 setServerStatus('offline');
             }
         };

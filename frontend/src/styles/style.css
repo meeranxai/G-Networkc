@@ -6,13 +6,21 @@
 :root {
     /* Color Palette - Deep Slate & Vibrant Blue */
     --primary: #2563eb;
-    /* Modern vibrant blue */
     --primary-dark: #1d4ed8;
     --primary-light: #60a5fa;
+    --primary-50: #f5f3ff;
+    --primary-100: #ede9fe;
+    --primary-200: #ddd6fe;
+    --primary-300: #c4b5fd;
+    --primary-400: #a78bfa;
+    --primary-500: #8b5cf6;
+    --primary-600: #7c3aed;
+    --primary-700: #6d28d9;
+    --primary-800: #5b21b6;
+    --primary-900: #4c1d95;
+    
     --secondary: #0f172a;
-    /* Deep slate */
     --accent: #f59e0b;
-    /* Subtle amber for highlights */
 
     /* Neutral / Surfaces */
     --surface-0: #ffffff;
@@ -24,11 +32,23 @@
     --surface-900: #0f172a;
     --error: #ef4444;
 
+    /* Background System */
+    --background-primary: #ffffff;
+    --background-secondary: #fafafa;
+    --background-tertiary: #f4f4f5;
+    --background-elevated: #ffffff;
+
     /* Typography / Text */
     --text-primary: #0f172a;
     --text-secondary: #475569;
     --text-tertiary: #94a3b8;
     --text-inverse: #ffffff;
+
+    /* Borders */
+    --border-light: #f3f4f6;
+    --border-default: #e5e7eb;
+    --border-medium: #d1d5db;
+    --border-dark: #9ca3af;
 
     /* Spacing & Layout */
     --header-height: 72px;
@@ -47,6 +67,34 @@
 
     --transition-base: all 0.2s ease-in-out;
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Force proper text colors everywhere */
+body,
+body * {
+    color: inherit;
+}
+
+body {
+    color: var(--text-primary) !important;
+    background-color: var(--background-primary) !important;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+/* Ensure all headings use design system colors */
+h1, h2, h3, h4, h5, h6 {
+    color: var(--text-primary) !important;
+}
+
+/* Ensure paragraphs and text are visible */
+p, span, div, a, li, label {
+    color: inherit;
+}
+
+/* Override old social app background */
+body.social-app {
+    background-color: var(--background-primary) !important;
+    color: var(--text-primary) !important;
 }
 
 /* =========================================
