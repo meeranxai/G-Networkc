@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { API_BASE_URL } from '../../api/config';
 import { useAuth } from '../../contexts/AuthContext';
-import '../../styles/PostMenu.css'; // Reusing styles or creating specific ones
+// CSS imported via bundle.css in main.jsx ✅
 
 const ReportModal = ({ targetId, targetType = 'post', targetOwnerId, isOpen, onClose }) => {
     const { currentUser } = useAuth();

@@ -41,7 +41,7 @@ const LoadingSpinner = () => (
             <div style={{ 
                 width: '40px', 
                 height: '40px', 
-                border: '3px solid var(--accent-color)', 
+                border: '3px solid var(--accent)', 
                 borderTop: '3px solid transparent', 
                 borderRadius: '50%', 
                 animation: 'spin 1s linear infinite',

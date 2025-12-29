@@ -11,10 +11,15 @@ body, html, #root {
     color: var(--text-primary) !important;
 }
 
-/* AGGRESSIVE DARK MODE OVERRIDE - Force light theme everywhere */
-body, body *, html, html *, #root, #root * {
-    background-color: inherit !important;
-    color: inherit !important;
+/* AGGRESSIVE DARK MODE OVERRIDE - Force light theme base colors */
+body, html, #root {
+    background-color: var(--background-primary) !important;
+    color: var(--text-primary) !important;
+}
+
+/* Ensure background containers are light */
+.app-layout, .main-layout, .layout {
+    background-color: var(--background-primary) !important;
 }
 
 /* Override any dark classes */
@@ -92,11 +97,10 @@ body, body *, html, html *, #root, #root * {
     color: var(--text-primary) !important;
 }
 
-/* Buttons */
-.btn, button {
+/* Buttons - Less aggressive to allow for different button types */
+.btn-primary {
     background-color: var(--primary) !important;
     color: white !important;
-    border: none !important;
 }
 
 .btn-secondary, .btn-outline, .btn-ghost {

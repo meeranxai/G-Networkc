@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useSocket } from '../contexts/SocketContext';
 import { API_BASE_URL, getMediaUrl } from '../api/config';
-import '../styles/messenger.css';
+// CSS imported via bundle.css in main.jsx ✅
 
 const Messages = () => {
     const { currentUser } = useAuth();

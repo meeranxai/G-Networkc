@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAutonomousTheme } from '../../contexts/AutonomousThemeContext';
 import { API_BASE_URL } from '../../api/config';
-import '../../styles/settings-enhancements.css';
+// CSS imported via bundle.css in main.jsx ✅
 
 const AIDashboard = () => {
     const { isOptimizing, triggerManualOptimization } = useAutonomousTheme();

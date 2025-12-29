@@ -10,7 +10,7 @@ import ReportModal from '../common/ReportModal';
 import ShareModal from '../common/ShareModal';
 import { useGNavigation } from '../../contexts/NavigationContext';
 import RichText from '../common/RichText';
-import '../../styles/PostCard.css';
+// CSS imported via bundle.css in main.jsx ✅
 
 const PostCard = ({ post, onUpdate, feedType = 'home' }) => {
     const { currentUser } = useAuth();

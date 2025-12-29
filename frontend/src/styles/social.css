@@ -2,9 +2,6 @@
    SOCIAL MEDIA APP STYLES (G-Network Pivot)
    ========================================================================== */
 
-/* Import Core Variables */
-@import url('./style.css');
-
 :root {
     /* Use max-width/proportions instead of fixed rigid widths where possible */
     --feed-max-width: 640px;

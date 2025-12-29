@@ -5,7 +5,7 @@ import { getMediaUrl, API_BASE_URL } from '../../api/config';
 import CommentItem from './CommentItem';
 import RichText from '../common/RichText';
 import ShareModal from '../common/ShareModal';
-import '../../styles/PostViewer.css';
+// CSS imported via bundle.css in main.jsx ✅
 
 const PostViewer = () => {
     const { currentPost, isViewerOpen, closePostViewer, navigateToNextPost, navigateToPreviousPost } = useGNavigation();

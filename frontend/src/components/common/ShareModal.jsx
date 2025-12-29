@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { API_BASE_URL } from '../../api/config';
 import { useToast } from '../../contexts/ToastContext';
-import '../../styles/PostMenu.css'; // Reuse existing modal styles
+// CSS imported via bundle.css in main.jsx ✅
 
 const ShareModal = ({ isOpen, onClose, post, shareUrl }) => {
     const { currentUser } = useAuth();
