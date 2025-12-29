@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  base: '/',
   build: {
     outDir: 'dist',
     sourcemap: false,
@@ -19,7 +20,14 @@ export default defineConfig({
         // Optimize chunk sizes
         chunkFileNames: 'assets/[name]-[hash].js',
         entryFileNames: 'assets/[name]-[hash].js',
-        assetFileNames: 'assets/[name]-[hash].[ext]'
+        assetFileNames: (assetInfo) => {
+          const info = assetInfo.name.split('.');
+          const ext = info[info.length - 1];
+          if (/\.(css)$/.test(assetInfo.name)) {
+            return `assets/css/[name]-[hash].${ext}`;
+          }
+          return `assets/[name]-[hash].${ext}`;
+        }
       }
     },
     // Optimize bundle size
@@ -40,7 +48,7 @@ export default defineConfig({
       overlay: false
     }
   },
-  // Disable PostCSS processing to avoid CSS parsing errors
+  // CSS optimizations for production
   css: {
     devSourcemap: false,
     postcss: false

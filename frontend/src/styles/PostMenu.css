@@ -17,7 +17,7 @@
 
 .menu-trigger:hover,
 .menu-trigger.active {
-    background: var(--bg-tertiary);
+    background: var(--background-tertiary);
     color: var(--text-primary);
 }
 
@@ -87,7 +87,7 @@
 }
 
 .menu-item:hover {
-    background: var(--bg-secondary);
+    background: var(--background-secondary);
     transform: translateX(2px);
 }
 

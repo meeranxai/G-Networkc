@@ -86,6 +86,121 @@ body.social-app.settings-view #root {
     margin: 0 auto;
 }
 
+/* RIGHT SIDEBAR (Discovery) */
+.sidebar-right {
+    width: var(--sidebar-width);
+    flex-shrink: 0;
+    position: sticky;
+    top: 30px;
+}
+
+.trending-box {
+    border-radius: var(--radius-xl);
+    padding: var(--space-5);
+    margin-bottom: var(--space-6);
+}
+
+.trending-box h3 {
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: var(--space-4);
+    color: var(--text-primary);
+}
+
+.trending-list {
+    list-style: none;
+    padding: 0;
+}
+
+.trending-item {
+    padding: var(--space-3) 0;
+    border-bottom: 1px solid var(--border-light);
+    transition: background 0.2s ease;
+}
+
+.trending-item:last-child {
+    border-bottom: none;
+}
+
+.trend-tag {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--primary);
+    display: block;
+    margin-bottom: 2px;
+}
+
+.trend-count {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+}
+
+.empty-state {
+    padding: var(--space-6);
+    text-align: center;
+    color: var(--text-muted);
+}
+
+/* MOBILE NAVIGATION */
+.bottom-nav {
+    display: none;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--background-elevated);
+    border-top: 1px solid var(--border-light);
+    height: 60px;
+    justify-content: space-around;
+    align-items: center;
+    z-index: var(--z-fixed);
+    padding-bottom: env(safe-area-inset-bottom);
+}
+
+.bottom-nav-item {
+    color: var(--text-tertiary);
+    font-size: 1.4rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    transition: color 0.2s ease;
+}
+
+.bottom-nav-item.active {
+    color: var(--primary);
+}
+
+.bottom-nav-item.highlight {
+    background: var(--primary-600);
+    color: white;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.4);
+    transform: translateY(-10px);
+}
+
+@media (max-width: 768px) {
+    .bottom-nav {
+        display: flex;
+    }
+}
+
+/* ==========================================================================
+   UTILITY CLASSES
+   ========================================================================== */
+.glass-blur {
+    background: var(--surface-glass);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-light);
+    box-shadow: var(--shadow-sm);
+}
+
 /* LEFT SIDEBAR (Navigation) */
 .sidebar-left {
     width: var(--sidebar-width);

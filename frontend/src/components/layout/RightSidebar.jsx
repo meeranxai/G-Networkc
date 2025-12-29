@@ -29,20 +29,20 @@ const RightSidebar = () => {
                 <h3>Discovery Trends</h3>
                 <div id="trending-list">
                     {loading ? (
-                        <div className="empty-notif" style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>
+                        <div className="empty-state">
                             <p>Loading trends...</p>
                         </div>
                     ) : trends.length > 0 ? (
-                        <ul style={{ listStyle: 'none', padding: 0 }}>
+                        <ul className="trending-list">
                             {trends.map((trend, index) => (
-                                <li key={index} style={{ padding: '10px 15px', borderBottom: '1px solid var(--border-color)' }}>
-                                    <div style={{ fontSize: '1rem', fontWeight: 'bold' }}>#{trend.tag}</div>
-                                    <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{trend.count} {trend.count === 1 ? 'post' : 'posts'}</div>
+                                <li key={index} className="trending-item">
+                                    <div className="trend-tag">#{trend.tag}</div>
+                                    <div className="trend-count">{trend.count} {trend.count === 1 ? 'post' : 'posts'}</div>
                                 </li>
                             ))}
                         </ul>
                     ) : (
-                        <div className="empty-notif" style={{ padding: '20px', textAlign: 'center', color: '#94a3b8' }}>
+                        <div className="empty-state">
                             <p>No trending topics yet.</p>
                         </div>
                     )}

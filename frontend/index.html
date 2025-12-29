@@ -6,10 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content="G-Network - Social Media Platform" />
     <meta name="theme-color" content="#667eea" />
-    <!-- Cache busting -->
+    
+    <!-- Preload critical CSS for faster rendering -->
+    <link rel="preload" href="/src/styles/bundle.css" as="style" />
+    
+    <!-- Cache control for production -->
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
     <meta http-equiv="Pragma" content="no-cache" />
     <meta http-equiv="Expires" content="0" />
+    
     <title>G-Network</title>
   </head>
   <body>

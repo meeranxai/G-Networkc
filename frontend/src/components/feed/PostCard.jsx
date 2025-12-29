@@ -297,26 +297,26 @@ const PostCard = ({ post, onUpdate, feedType = 'home' }) => {
     };
 
     return (
-        <article className="post-card" style={{ marginBottom: 'var(--space-6)', borderRadius: 'var(--radius-xl)', overflow: 'hidden', position: 'relative', background: 'var(--background-elevated)', border: 'none', boxShadow: 'var(--shadow-md)' }}>
+        <article className="post-card">
             {/* Header */}
-            <div className="post-header" style={{ padding: '15px 20px', display: 'flex', alignItems: 'center', justifyContent: 'space-between', background: 'transparent' }}>
-                <NavLink to={`/profile/${post.authorId}`} className="post-author-link" style={{ display: 'flex', alignItems: 'center', gap: '12px', textDecoration: 'none', color: 'inherit', flex: 1 }}>
-                    <div className="post-avatar-container" style={{ position: 'relative' }}>
-                        <img className="post-avatar" src={getMediaUrl(post.authorAvatar)} alt="" style={{ width: '44px', height: '44px', borderRadius: '50%', border: '2px solid var(--primary-light)', objectFit: 'cover' }} />
-                        <div className="online-badge" style={{ position: 'absolute', bottom: 0, right: 0, width: '12px', height: '12px', background: '#10b981', border: '2px solid #fff', borderRadius: '50%' }}></div>
+            <div className="post-header">
+                <NavLink to={`/profile/${post.authorId}`} className="post-author-link">
+                    <div className="post-avatar-container">
+                        <img className="post-avatar" src={getMediaUrl(post.authorAvatar)} alt="" />
+                        <div className="online-badge"></div>
                     </div>
                     <div className="post-meta">
-                        <div className="post-author-name" style={{ fontWeight: '800', fontSize: '15px', display: 'flex', alignItems: 'center', gap: '5px', color: 'var(--text-primary)' }}>
+                        <div className="post-author-name">
                             {post.author}
-                            <i className="fas fa-check-circle" style={{ color: 'var(--primary)', fontSize: '12px' }}></i>
+                            <i className="fas fa-check-circle"></i>
                             {postData.isRepost && (
-                                <span className="repost-badge" style={{ fontSize: '12px', color: 'var(--text-tertiary)', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                                <span className="repost-badge">
                                     <i className="fas fa-retweet"></i> Reposted
                                 </span>
                             )}
                         </div>
-                        <div className="post-meta-info" style={{ fontSize: '11px', color: 'var(--text-tertiary)', fontWeight: '500' }}>
-                            <i className={`fas fa-${postData.visibility === 'public' ? 'globe-americas' : 'users'}`} style={{ marginRight: '4px' }}></i>
+                        <div className="post-meta-info">
+                            <i className={`fas fa-${postData.visibility === 'public' ? 'globe-americas' : 'users'}`}></i>
                             {post.category} <span className="separator">•</span> {new Date(post.createdAt).toLocaleDateString()}
                         </div>
                     </div>
@@ -324,31 +324,10 @@ const PostCard = ({ post, onUpdate, feedType = 'home' }) => {
 
                 {/* Three Dots Menu - Temporarily disabled due to React hook issues */}
                 <div style={{ position: 'relative', zIndex: 20 }}>
-                    {/* TODO: Fix PostMenu React hook error - multiple React copies issue */}
-                    {/* <PostMenu
-                        post={post}
-                        onEdit={() => setIsEditModalOpen(true)}
-                        onDelete={handleDelete}
-                        onReport={() => setIsReportModalOpen(true)}
-                        onArchive={handleArchive}
-                        onAnalytics={() => alert("Analytics modal phase 3")}
-                        onFollow={handleFollow}
-                        onMute={handleMute}
-                        onBlock={handleBlock}
-                    /> */}
                     <button
                         onClick={() => setShowMenu(!showMenu)}
-                        style={{
-                            background: 'rgba(0,0,0,0.05)',
-                            border: 'none',
-                            borderRadius: '50%',
-                            width: '32px',
-                            height: '32px',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center'
-                        }}
+                        className="ai-btn"
+                        style={{ background: 'var(--surface-100)', color: 'var(--text-primary)' }}
                     >
                         <i className="fas fa-ellipsis-h"></i>
                     </button>
@@ -357,23 +336,16 @@ const PostCard = ({ post, onUpdate, feedType = 'home' }) => {
 
             {/* Media Content - Edge to Edge */}
             {post.image && (
-                <div className="post-media" onClick={handleMediaClick} style={{
-                    cursor: 'pointer',
-                    borderRadius: 'var(--radius-lg)',
-                    overflow: 'hidden',
-                    margin: 'var(--space-2) 0',
-                    border: '1px solid var(--border-light)',
-                    position: 'relative'
-                }}>
+                <div className="post-media" onClick={handleMediaClick}>
                     {/* Media Badges overlay */}
-                    <div style={{ position: 'absolute', top: '10px', right: '10px', zIndex: 10, display: 'flex', gap: '8px' }}>
-                        <button onClick={(e) => { e.stopPropagation(); setShowAIInsights(!showAIInsights); }} style={{ background: 'rgba(0,0,0,0.4)', backdropFilter: 'blur(4px)', color: '#fff', border: 'none', borderRadius: '50%', width: '28px', height: '28px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <i className="fas fa-robot" style={{ fontSize: '12px' }}></i>
+                    <div className="ai-badge-container">
+                        <button onClick={(e) => { e.stopPropagation(); setShowAIInsights(!showAIInsights); }} className="ai-btn">
+                            <i className="fas fa-robot"></i>
                         </button>
                     </div>
 
                     {showAIInsights && postData.aiIntelligence && (
-                        <div className="ai-modal" style={{ position: 'absolute', top: '45px', right: '10px', width: '220px', background: 'rgba(25, 25, 25, 0.95)', backdropFilter: 'blur(10px)', borderRadius: '12px', padding: '12px', zIndex: 20, color: '#fff', border: '1px solid rgba(255,255,255,0.1)', fontSize: '12px' }}>
+                        <div className="ai-insights-panel">
                             <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '8px', borderBottom: '1px solid rgba(255,255,255,0.1)', paddingBottom: '4px' }}>
                                 <span style={{ fontWeight: 'bold', color: 'var(--primary-400)' }}>AI Analysis</span>
                                 <i className="fas fa-times" onClick={(e) => { e.stopPropagation(); setShowAIInsights(false); }} style={{ cursor: 'pointer' }}></i>
@@ -388,23 +360,11 @@ const PostCard = ({ post, onUpdate, feedType = 'home' }) => {
                         <video
                             src={getMediaUrl(post.image)}
                             controls
-                            style={{
-                                width: '100%',
-                                display: 'block',
-                                maxHeight: '600px',
-                                objectFit: 'cover'
-                            }}
                         />
                     ) : (
                         <img
                             src={getMediaUrl(post.image)}
                             alt={post.altText || "Post content"}
-                            style={{
-                                width: '100%',
-                                display: 'block',
-                                maxHeight: '600px',
-                                objectFit: 'cover'
-                            }}
                         />
                     )}
                 </div>
@@ -412,37 +372,28 @@ const PostCard = ({ post, onUpdate, feedType = 'home' }) => {
 
             {/* Content Text (if no media, or caption below media) */}
             {post.description && (
-                <div className="post-content" style={{ padding: '0 var(--space-2)', marginBottom: 'var(--space-3)' }}>
+                <div className="post-content">
                     <RichText content={post.description} />
                 </div>
             )}
 
             {/* Action Bar - Floating/Clean */}
-            <div className="post-actions" style={{
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                padding: 'var(--space-2) var(--space-2)',
-                borderTop: '1px solid var(--border-light)',
-                marginTop: 'var(--space-2)'
-            }}>
+            <div className="post-actions">
                 <div className="left-actions" style={{ display: 'flex', gap: 'var(--space-4)' }}>
                     <button
                         className={`action-btn ${isLiked ? 'liked' : ''}`}
                         onClick={handleLike}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '1.2rem', color: isLiked ? '#ef4444' : 'var(--text-secondary)' }}
                     >
                         <i className={isLiked ? "fas fa-heart" : "far fa-heart"}></i>
-                        {likesCount > 0 && <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{likesCount}</span>}
+                        {likesCount > 0 && <span className="action-count">{likesCount}</span>}
                     </button>
 
                     <button
                         className="action-btn"
                         onClick={() => setShowComments(!showComments)}
-                        style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', fontSize: '1.2rem', color: 'var(--text-secondary)' }}
                     >
                         <i className="far fa-comment"></i>
-                        {post.comments && post.comments.length > 0 && <span style={{ fontSize: '0.9rem', fontWeight: 600 }}>{post.comments.length}</span>}
+                        {post.comments && post.comments.length > 0 && <span className="action-count">{post.comments.length}</span>}
                     </button>
 
                     <button

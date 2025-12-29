@@ -20,18 +20,7 @@ const MobileNav = () => {
                 <i className="fas fa-search"></i>
             </NavLink>
 
-            <NavLink to="/create" className="bottom-nav-item highlight" style={{
-                background: 'var(--primary-600)',
-                color: 'white',
-                width: '48px',
-                height: '48px',
-                borderRadius: '50%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                boxShadow: '0 4px 10px rgba(124, 58, 237, 0.4)',
-                transform: 'translateY(-10px)'
-            }} aria-label="Create Post">
+            <NavLink to="/create" className="bottom-nav-item highlight" aria-label="Create Post">
                 <i className="fas fa-plus"></i>
             </NavLink>
 

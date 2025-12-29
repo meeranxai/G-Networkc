@@ -1,0 +1,69 @@
+/* =================================================================
+   G-NETWORK PRODUCTION CSS BUNDLE
+   Optimized for Vercel deployment with proper CSS loading
+   ================================================================= */
+
+/* Import all CSS files in correct order for production */
+@import './style.css';
+@import './social.css';
+@import './components.css';
+@import './pages-enhancement.css';
+@import './profile.css';
+@import './login.css';
+@import './messenger.css';
+@import './settings-complete.css';
+@import './settings-enhancements.css';
+@import './PostCard.css';
+@import './PostViewer.css';
+@import './PostMenu.css';
+@import './Toast.css';
+@import './call.css';
+@import './whatsapp.css';
+@import './app-integration.css';
+@import './light-theme-force.css';
+
+/* =================================================================
+   PRODUCTION OPTIMIZATIONS
+   ================================================================= */
+
+/* Ensure proper box-sizing for all elements */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+/* Optimize font rendering */
+body {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+}
+
+/* GPU acceleration for smooth animations */
+.animated-element,
+.modal-overlay,
+.post-card,
+.profile-header {
+    transform: translateZ(0);
+    will-change: transform;
+}
+
+/* Optimize images for better performance */
+img {
+    image-rendering: optimizeQuality;
+    image-rendering: -webkit-optimize-contrast;
+}
+
+/* Memory-efficient scrolling */
+.scroll-container,
+.feed-stream,
+.messages-container {
+    overflow-anchor: auto;
+    scroll-behavior: smooth;
+}
+
+/* Reduce layout thrashing */
+.container,
+.main-content,
+.sidebar {
+    contain: layout style paint;
+}

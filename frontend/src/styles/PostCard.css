@@ -1,41 +1,194 @@
-/* PostCard.css */
+/* PostCard.css - Refined Social Design */
 .post-card {
-    /* Styles are currently inline or in other files */
     position: relative;
-    transition: box-shadow 0.2s;
+    background: var(--background-elevated);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+    margin-bottom: var(--space-6);
 }
 
 .post-card:hover {
     box-shadow: var(--shadow-lg);
+    transform: translateY(-2px);
 }
 
 .post-header {
+    padding: 15px 20px;
     display: flex;
     align-items: center;
     justify-content: space-between;
+    background: transparent;
+}
+
+.post-author-link {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+    color: inherit;
+    flex: 1;
+}
+
+.post-avatar-container {
+    position: relative;
 }
 
 .post-avatar {
-    width: 40px;
-    height: 40px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
+    border: 2px solid var(--primary-light);
     object-fit: cover;
 }
 
+.online-badge {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    width: 12px;
+    height: 12px;
+    background: var(--success);
+    border: 2px solid var(--background-elevated);
+    border-radius: 50%;
+}
+
+.post-meta {
+    display: flex;
+    flex-direction: column;
+}
+
 .post-author-name {
-    font-weight: 600;
+    font-weight: 800;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 5px;
     color: var(--text-primary);
-    text-decoration: none;
 }
 
 .post-meta-info {
-    font-size: 0.85rem;
-    color: var(--text-secondary);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
+    font-size: 11px;
+    color: var(--text-tertiary);
+    font-weight: 500;
 }
 
-.separator {
+.repost-badge {
+    font-size: 12px;
     color: var(--text-tertiary);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+/* Media Section */
+.post-media {
+    cursor: pointer;
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    margin: var(--space-2) var(--space-4);
+    border: 1px solid var(--border-light);
+    position: relative;
+}
+
+.post-media img,
+.post-media video {
+    width: 100%;
+    display: block;
+    max-height: 600px;
+    object-fit: cover;
+}
+
+.ai-badge-container {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    z-index: 10;
+    display: flex;
+    gap: 8px;
+}
+
+.ai-btn {
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 28px;
+    height: 28px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s;
+}
+
+.ai-btn:hover {
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.ai-insights-panel {
+    position: absolute;
+    top: 45px;
+    right: 10px;
+    width: 220px;
+    background: var(--surface-glass-dark);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
+    padding: 12px;
+    z-index: 20;
+    color: white;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    font-size: 12px;
+}
+
+/* Content */
+.post-content {
+    padding: 0 var(--space-4);
+    margin-bottom: var(--space-3);
+    color: var(--text-primary);
+    line-height: 1.5;
+}
+
+/* Actions */
+.post-actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+    border-top: 1px solid var(--border-light);
+    background: var(--surface-50);
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    color: var(--text-secondary);
+    transition: all 0.2s;
+    padding: 6px 10px;
+    border-radius: var(--radius-md);
+}
+
+.action-btn:hover {
+    background: var(--surface-100);
+    color: var(--primary);
+}
+
+.action-btn.liked {
+    color: var(--error);
+}
+
+.action-btn.liked:hover {
+    background: var(--error-light);
+}
+
+.action-count {
+    font-size: 0.9rem;
+    font-weight: 600;
 }
