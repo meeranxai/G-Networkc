@@ -10,7 +10,6 @@ import { SocketProvider } from './contexts/SocketContext';
 import PerformanceMonitor from './components/performance/PerformanceMonitor';
 import WebSocketDebug from './components/debug/WebSocketDebug';
 import CSSDebug from './components/debug/CSSDebug';
-import BackendWakeup from './components/common/BackendWakeup';
 
 // Lazy load components to reduce initial bundle size
 const Home = lazy(() => import('./pages/Home'));
@@ -76,53 +75,51 @@ const ProtectedRoute = ({ children }) => {
 function App() {
     return (
         <AuthProvider>
-            <BackendWakeup>
-                <SocketProvider>
-                    <Router>
-                        <ToastProvider>
-                            <NavigationProvider>
-                                <NotificationProvider>
-                                    <PerformanceMonitor />
-                                    <WebSocketDebug />
-                                    <CSSDebug />
-                                    <Suspense fallback={<LoadingSpinner />}>
-                                        <Routes>
-                                            <Route path="/login" element={<Login />} />
-                                            <Route path="/design-showcase" element={<DesignShowcase />} />
+            <SocketProvider>
+                <Router>
+                    <ToastProvider>
+                        <NavigationProvider>
+                            <NotificationProvider>
+                                <PerformanceMonitor />
+                                <WebSocketDebug />
+                                <CSSDebug />
+                                <Suspense fallback={<LoadingSpinner />}>
+                                    <Routes>
+                                        <Route path="/login" element={<Login />} />
+                                        <Route path="/design-showcase" element={<DesignShowcase />} />
 
-                                            {/* Protected Routes */}
-                                            <Route element={
-                                                <ProtectedRoute>
-                                                    <AutonomousThemeProvider>
-                                                        <Suspense fallback={<div>Loading AI features...</div>}>
-                                                            <AutonomousTracker />
-                                                            <AIChatBot />
-                                                        </Suspense>
-                                                        <Layout />
-                                                    </AutonomousThemeProvider>
-                                                </ProtectedRoute>
-                                            }>
-                                                <Route path="/" element={<Home />} />
-                                                <Route path="/profile" element={<Profile />} />
-                                                <Route path="/profile/:uid" element={<Profile />} />
-                                                <Route path="/explore" element={<Explore />} />
-                                                <Route path="/reels" element={<Reels />} />
-                                                <Route path="/notifications" element={<Notifications />} />
-                                                <Route path="/messages" element={<Messages />} />
-                                                <Route path="/create" element={<CreatePostPage />} />
-                                                <Route path="/archive" element={<Archive />} />
-                                                <Route path="/settings" element={<Settings />} />
-                                            </Route>
+                                        {/* Protected Routes */}
+                                        <Route element={
+                                            <ProtectedRoute>
+                                                <AutonomousThemeProvider>
+                                                    <Suspense fallback={<div>Loading AI features...</div>}>
+                                                        <AutonomousTracker />
+                                                        <AIChatBot />
+                                                    </Suspense>
+                                                    <Layout />
+                                                </AutonomousThemeProvider>
+                                            </ProtectedRoute>
+                                        }>
+                                            <Route path="/" element={<Home />} />
+                                            <Route path="/profile" element={<Profile />} />
+                                            <Route path="/profile/:uid" element={<Profile />} />
+                                            <Route path="/explore" element={<Explore />} />
+                                            <Route path="/reels" element={<Reels />} />
+                                            <Route path="/notifications" element={<Notifications />} />
+                                            <Route path="/messages" element={<Messages />} />
+                                            <Route path="/create" element={<CreatePostPage />} />
+                                            <Route path="/archive" element={<Archive />} />
+                                            <Route path="/settings" element={<Settings />} />
+                                        </Route>
 
-                                            <Route path="*" element={<Navigate to="/" replace />} />
-                                        </Routes>
-                                    </Suspense>
-                                </NotificationProvider>
-                            </NavigationProvider>
-                        </ToastProvider>
-                    </Router>
-                </SocketProvider>
-            </BackendWakeup>
+                                        <Route path="*" element={<Navigate to="/" replace />} />
+                                    </Routes>
+                                </Suspense>
+                            </NotificationProvider>
+                        </NavigationProvider>
+                    </ToastProvider>
+                </Router>
+            </SocketProvider>
         </AuthProvider>
     );
 }

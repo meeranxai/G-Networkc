@@ -53,7 +53,13 @@ export default defineConfig({
   // CSS optimizations for production
   css: {
     devSourcemap: false,
-    postcss: false
+    postcss: false,
+    // Ensure CSS is properly bundled for Vercel
+    preprocessorOptions: {
+      css: {
+        charset: false
+      }
+    }
   },
   // Ensure proper asset handling
   assetsInclude: ['**/*.css']
