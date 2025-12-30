@@ -1,7 +1,7 @@
 import React from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App.jsx'
-import './styles/bundle.css'
+import './index.css'
 
 // Production environment check
 if (import.meta.env.PROD) {

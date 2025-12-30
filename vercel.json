@@ -4,7 +4,7 @@
     {
       "src": "frontend/package.json",
       "use": "@vercel/static-build",
-      "config": { 
+      "config": {
         "installCommand": "cd frontend && npm install",
         "buildCommand": "cd frontend && npm run build",
         "outputDirectory": "frontend/dist"
@@ -23,5 +23,10 @@
       "src": "/(.*)",
       "dest": "/index.html"
     }
-  ]
+  ],
+  "functions": {
+    "api/index.js": {
+      "memory": 1024
+    }
+  }
 }

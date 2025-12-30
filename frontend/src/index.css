@@ -1,0 +1,6 @@
+/*
+  This is the main CSS entry point for the application.
+  Import all other global CSS files into this file.
+*/
+
+@import './styles/bundle.css';
